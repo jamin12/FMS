@@ -51,7 +51,6 @@ const mobile = (value, helpers) => {
 };
 
 const datetime = (value, helpers) => {
-  console.log(value);
   if (!value.match(REGEXP_DATETIME)) {
     return helpers.message('invalid datetime format \'YYYY-MM-DD HH:mm:ss\'');
   }

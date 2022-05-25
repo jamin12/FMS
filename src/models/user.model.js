@@ -55,7 +55,6 @@ const joinUserDetail = async (user, details) => {
 };
 
 const splitUserDetails = async (user) => {
-  console.log(user);
   const userDetails = JSON.parse(JSON.stringify(user.details));
   user = pick(user, user_col);
   return { user, userDetail: userDetails };
@@ -237,7 +236,6 @@ const toJSON = (user) => {
   if (user.details) {
     user_details_privates.forEach(item => delete user['details'][item]);
   }
-  console.log(user);
 
   return user;
 };

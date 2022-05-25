@@ -39,7 +39,6 @@ const addDrivePoint = async (req) => {
 
 const queryTrip = async (body) => {
   const { car_id, start_dt, end_dt } = body;
-  console.log(body);
   return History.findTripHistory(car_id, start_dt, end_dt);
 };
 

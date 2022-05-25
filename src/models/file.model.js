@@ -104,7 +104,6 @@ const remove = async (filter) => {
   `;
   const delete_query = `
   DELETE FROM files WHERE ${where_stmt}`;
-  console.log({select_query, delete_query})
 
   const [file] = await con.query(select_query);
   const result = await con.query(delete_query);

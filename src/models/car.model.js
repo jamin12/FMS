@@ -46,7 +46,6 @@ const isCarIdTaken = async (car_id) => {
   `;
   const [car] = await conn.query(query, [car_id]);
   await conn.release();
-
   if (!car || car.length === 0) {
     return false;
   }
@@ -64,7 +63,6 @@ const create = async (carBody) => {
     car_nm,
     car_no
   };
-  console.log(car);
 
   let newCar;
   const insert_bas_query = `
@@ -232,7 +230,6 @@ const toJSON = (user) => {
   if (user.details) {
     user_details_privates.forEach(item => delete user['details'][item]);
   }
-  console.log(user);
 
   return user;
 };
