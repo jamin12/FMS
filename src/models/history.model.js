@@ -1,0 +1,267 @@
+const validator = require('validator');
+const bcrypt = require('bcryptjs');
+const { v4: uuid } = require('uuid');
+const { pool, transaction } = require('../middlewares/db');
+const pick = require('../utils/pick');
+const logger = require('../config/logger');
+
+
+class History {
+  constructor(history) {
+    this.car_id = history.car_id;
+    this.car_no = history.car_no;
+    this.car_nm = history.car_nm;
+    this.created_at = history.created_at;
+    this.updated_at = history.updated_at;
+  }
+
+  static from(json) {
+    return Object.assign(new History(), json);
+  }
+}
+
+const history_col = [
+  'car_id',
+  'colec_dt',
+  'trip_seq',
+  'lat',
+  'lng',
+  'created_at',
+  'updated_at'
+];
+
+const condition = async (filter) => {
+  let where_stmt = '';
+  history_col.forEach((col) => {
+    if (filter[col]) where_stmt += (where_stmt !== '' ? ' AND ' : '') + `${col}='${filter[col]}'`;
+  });
+  return where_stmt;
+};
+
+const createHistory = async (historyBody) => {
+  const { car_id, trip_seq, data } = historyBody;
+
+  const values = [];
+  for (let item of data) {
+    values.push([car_id, item.colec_dt, trip_seq, item.lat, item.lng]);
+  }
+
+  let result;
+  const insert_query = `
+    INSERT INTO drive_hst (car_id, colec_dt, trip_seq, lat, lng)
+    VALUES ?`;
+
+  const conn = await pool.getConnection();
+  try {
+    await conn.beginTransaction();
+    [result] = await conn.query(insert_query, [values]);
+    logger.debug(result);
+    await conn.commit();
+  } catch (err) {
+    await conn.rollback();
+    throw err;
+  } finally {
+    await conn.release();
+  }
+
+  return result;
+};
+
+const createPointHistory = async (historyBody) => {
+  const { car_id, colec_dt, trip_seq, lat, lng, fid } = historyBody;
+
+  let result;
+  const insert_query = `
+    INSERT INTO drive_point_hst (car_id, colec_dt, trip_seq, lat, lng, fid)
+    VALUES (?, ?, ?, ?, ?, ?)`;
+
+  const conn = await pool.getConnection();
+  try {
+    await conn.beginTransaction();
+    [result] = await conn.query(insert_query, [car_id, colec_dt, trip_seq, lat, lng, fid]);
+    logger.debug(result);
+    await conn.commit();
+  } catch (err) {
+    await conn.rollback();
+    throw err;
+  } finally {
+    await conn.release();
+  }
+
+  return result;
+};
+
+const createTrip = async (car_id, trip_seq, colec_dt, lat, lng) => {
+  let result;
+  const insert_query = `
+    INSERT INTO trip_hst (car_id, trip_seq, st_lat, st_lng, start_dt, created_at)
+    VALUES (?, ?, ?, ?, ?, now())`;
+
+  const conn = await pool.getConnection();
+  try {
+    await conn.beginTransaction();
+    [result] = await conn.query(insert_query, [car_id, trip_seq, lat, lng, colec_dt]);
+    logger.debug(result);
+    await conn.commit();
+  } catch (err) {
+    await conn.rollback();
+    throw err;
+  } finally {
+    await conn.release();
+  }
+
+  return result;
+};
+
+const updateTrip = async (car_id, trip_seq, colec_dt, lat, lng) => {
+  let result;
+  const update_query = `
+    UPDATE trip_hst
+    SET fin_lat    = ?,
+        fin_lng    = ?,
+        end_dt     = ?,
+        updated_at = NOW()
+    WHERE car_id = ?
+      AND trip_seq = ?`;
+
+  const conn = await pool.getConnection();
+  try {
+    await conn.beginTransaction();
+    [result] = await conn.query(update_query, [lat, lng, colec_dt, car_id, trip_seq]);
+    logger.debug(result);
+    await conn.commit();
+  } catch (err) {
+    await conn.rollback();
+    throw err;
+  } finally {
+    await conn.release();
+  }
+
+  return result;
+};
+
+const findTripHistory = async (car_id, start_dt, end_dt) => {
+  let result;
+  const select_query = `
+    SELECT C.car_id      AS car_id,
+           C.car_no      AS car_no,
+           C.car_nm      AS car_nm,
+           TRIP.trip_seq AS trip_seq,
+           TRIP.start_dt AS start_dt,
+           TRIP.end_dt   AS end_dt,
+           TRIP.st_lat   AS st_lat,
+           TRIP.st_lng   AS st_lng,
+           TRIP.fin_lat  AS fin_lat,
+           TRIP.fin_lng  AS fin_lng,
+           C.created_at  AS created_at,
+           C.updated_at  AS updated_at
+    FROM car_bas C
+           LEFT JOIN car_stat CS ON C.car_id = CS.car_id
+           LEFT JOIN trip_hst TRIP on C.car_id = TRIP.car_id
+    WHERE C.car_id = ?
+      AND TRIP.start_dt >= ?
+      AND CASE WHEN TRIP.end_dt IS NOT NULL THEN TRIP.end_dt <= ?
+          ELSE true END`;
+
+  const conn = await pool.getConnection();
+  try {
+    await conn.beginTransaction();
+    [result] = await conn.query(select_query, [car_id, start_dt, end_dt]);
+    logger.debug(result);
+    await conn.commit();
+  } catch (err) {
+    await conn.rollback();
+    throw err;
+  } finally {
+    await conn.release();
+  }
+
+  return result;
+};
+
+const findHistory = async (car_id, trip_seq) => {
+  let result;
+  const select_query = `
+    WITH TRIP AS (
+      SELECT *
+      FROM trip_hst
+      WHERE car_id = ?
+        AND trip_seq = ?
+    )
+    SELECT DH.car_id,
+           DH.colec_dt,
+           DH.lat,
+           DH.lng
+    FROM (
+           SELECT D.car_id, D.colec_dt, D.lat, D.lng
+           FROM drive_hst D,
+                TRIP
+           WHERE D.car_id = TRIP.car_id
+             AND colec_dt >= TRIP.start_dt
+             AND colec_dt <= TRIP.end_dt
+         ) DH`;
+
+  const conn = await pool.getConnection();
+  try {
+    await conn.beginTransaction();
+    [result] = await conn.query(select_query, [car_id, trip_seq, car_id]);
+    logger.debug(result);
+    await conn.commit();
+  } catch (err) {
+    await conn.rollback();
+    throw err;
+  } finally {
+    await conn.release();
+  }
+
+  return result;
+};
+
+const findPointHistory = async (car_id, trip_seq) => {
+  let result;
+  const select_query = `
+    WITH TRIP AS (
+      SELECT *
+      FROM trip_hst
+      WHERE car_id = ?
+        AND trip_seq = ?
+    )
+    SELECT DH.car_id,
+           DH.colec_dt,
+           DH.lat,
+           DH.lng,
+           DH.fid
+    FROM (
+           SELECT D.car_id, D.colec_dt, D.lat, D.lng, D.fid
+           FROM drive_point_hst D,
+                TRIP
+           WHERE D.car_id = TRIP.car_id
+             AND colec_dt >= TRIP.start_dt
+             AND colec_dt <= TRIP.end_dt
+         ) DH`;
+
+  const conn = await pool.getConnection();
+  try {
+    await conn.beginTransaction();
+    [result] = await conn.query(select_query, [car_id, trip_seq]);
+    logger.debug(result);
+    await conn.commit();
+  } catch (err) {
+    await conn.rollback();
+    throw err;
+  } finally {
+    await conn.release();
+  }
+
+  return result;
+};
+
+module.exports = {
+  findTripHistory,
+  findHistory,
+  findPointHistory,
+  createHistory,
+  createPointHistory,
+  createTrip,
+  updateTrip
+};
