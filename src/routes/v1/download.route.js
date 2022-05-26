@@ -7,8 +7,8 @@ const downloadController = require('../../controllers/download.controller');
 const router = express.Router();
 
 router
-  .route('/:id')
-  .get(auth(), validate(fileValidation.downloadFile), downloadController.download);
+  .route('/:fid')
+  .get(validate(fileValidation.downloadFile), downloadController.download);
 
 module.exports = router;
 

@@ -9,7 +9,7 @@ const logger = require('../config/logger');
 const limits = {
   filedNameSize: 200,             // default 100bytes
   filedSize: 10 * 1024 * 1024,    // default 1MB
-  fields: 2,                      // default INF
+  fields: 10,                      // default INF
   filesize: 20 * 1024 * 1024,     // default INF
   files: 10                       // default INF
 };

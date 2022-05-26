@@ -4,7 +4,7 @@ const ApiError = require('../utils/ApiError');
 const catchAsync = require('../utils/catchAsync');
 const User = require('../models/user.model');
 const logger = require('../config/logger');
-const { historyService } = require('../services');
+const { fileService, historyService } = require('../services');
 
 const createHistory = catchAsync(async (req, res) => {
   const result = await historyService.addHistory(req.body);
@@ -12,7 +12,7 @@ const createHistory = catchAsync(async (req, res) => {
 });
 
 const createPointHistory = catchAsync(async (req, res) => {
-  const result = await historyService.addDrivePoint(req.body);
+  const result = await historyService.addDrivePoint(req);
   res.status(httpStatus.CREATED).send({ result });
 });
 
@@ -29,7 +29,7 @@ const getHistory = catchAsync(async (req, res) => {
 });
 
 const getPointHistory = catchAsync(async (req, res) => {
-  const result = await historyService.getPointHistory(req.params);
+  const result = await historyService.getPointHistory(req.query);
   res.send({ result });
 });
 
@@ -40,3 +40,4 @@ module.exports = {
   getPointHistory,
   getHistory
 };
+

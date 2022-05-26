@@ -3,6 +3,7 @@ const helmet = require('helmet');
 const xss = require('xss-clean');
 const mongoSanitize = require('express-mongo-sanitize');
 const compression = require('compression');
+const bodyParser = require('body-parser');
 const cors = require('cors');
 const passport = require('passport');
 const httpStatus = require('http-status');
@@ -25,7 +26,8 @@ if (config.env !== 'test') {
 app.use(helmet());
 
 // parse json request body
-app.use(express.json());
+app.use(bodyParser.urlencoded({ extended: true }));
+app.use(bodyParser.json());
 
 // parse urlencoded request body
 app.use(express.urlencoded({ extended: true }));

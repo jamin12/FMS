@@ -25,9 +25,23 @@ const createHistory = {
 const createPointHistory = {
   body: Joi.object().keys({
     car_id: Joi.string().custom(carId).required(),
+    trip_seq: Joi.custom(datetime).required(),
+    colec_dt: Joi.custom(datetime).required(),
     lat: Joi.string().required(),
     lng: Joi.string().required()
-  })
+  }),
+  file: Joi.object()
+    .keys({
+      file: Joi.string(),
+      fieldname: Joi.string(),
+      originalname: Joi.string(),
+      encoding: Joi.string(),
+      mimetype: Joi.string(),
+      destination: Joi.string(),
+      filename: Joi.string(),
+      path: Joi.string(),
+      size: Joi.number()
+    }).min(1)
 };
 
 /**

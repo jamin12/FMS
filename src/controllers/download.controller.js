@@ -7,7 +7,7 @@ const catchAsync = require('../utils/catchAsync');
 const { fileService } = require('../services');
 
 const download = catchAsync(async (req, res) => {
-  const file = await fileService.getFile(req.params.id);
+  const file = await fileService.getFile(req.params.fid);
   if (!file) {
     throw ApiError(httpStatus.NOT_FOUND, 'File not found');
   }

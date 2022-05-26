@@ -3,7 +3,7 @@ const { objectId } = require('./custom.validation');
 
 const downloadFile = {
   params: Joi.object().keys({
-    id: Joi.string().required().custom(objectId),
+    fid: Joi.string().required().custom(objectId),
   }),
 };
 

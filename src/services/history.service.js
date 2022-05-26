@@ -36,6 +36,9 @@ const addHistory = async (body) => {
 const addDrivePoint = async (req) => {
   const parent_path = `driveHistory/${req.body.car_id}/${await parseHHmmss(req.body.colec_dt)}`;
   const file = await fileService.saveFile(req, parent_path);
+  if (!file) {
+    throw new ApiError('file not found.');
+  }
   logger.debug(JSON.stringify(file));
   req.body.fid = file.fid;
   return History.createPointHistory(req.body);
@@ -53,6 +56,7 @@ const getHistory = async (body) => {
 
 const getPointHistory = async (body) => {
   const { car_id, trip_seq } = body;
+  console.log(body)
   return History.findPointHistory(car_id, trip_seq);
 };
 

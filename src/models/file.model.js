@@ -3,7 +3,7 @@ const bcrypt = require('bcryptjs');
 const { v4: uuid } = require('uuid');
 const { pool } = require('../middlewares/db');
 
-const file_col = ['id', 'fieldname', 'encoding', 'mimetype', 'destination', 'filename', 'ext', 'filepath', 'bytes', 'created_at', 'updated_at'];
+const file_col = ['fid', 'fieldname', 'encoding', 'mimetype', 'destination', 'filename', 'ext', 'filepath', 'bytes', 'created_at', 'updated_at'];
 
 const condition = async (filter) => {
   let where_stmt = '';
@@ -14,7 +14,7 @@ const condition = async (filter) => {
 };
 
 const create = async (file) => {
-  file.id = uuid();
+  file.fid = uuid();
 
   const con = await pool.getConnection(conn => conn)
   await con.beginTransaction();
@@ -22,23 +22,24 @@ const create = async (file) => {
   INSERT INTO files SET ?
   `;
   const select_query = `
-  SELECT * FROM files WHERE id=?
+  SELECT * FROM files WHERE fid=?
   `;
   const result = await con.query(insert_query, [file]);
-  const [[inserted_file]] = await con.query(select_query, [file.id]);
+  const [[inserted_file]] = await con.query(select_query, [file.fid]);
+  console.log(inserted_file)
 
   await con.commit();
   await con.release();
   return inserted_file;
 };
 
-const findById = async (id) => {
+const findById = async (fid) => {
   const con = await pool.getConnection(conn => conn)
 
   const select_query = `
-  SELECT * FROM files WHERE id=?
+  SELECT * FROM files WHERE fid=?
   `;
-  const [[file]] = await con.query(select_query, [id]);
+  const [[file]] = await con.query(select_query, [fid]);
 
   await con.release();
 
@@ -75,19 +76,19 @@ const queryFiles = async (filter) => {
   return file;
 };
 
-const update = async (id, file) => {
+const update = async (fid, file) => {
   const con = await pool.getConnection(conn => conn)
   await con.beginTransaction();
 
   const update_query = `
   UPDATE files
   SET ?
-  WHERE id=?`
+  WHERE fid=?`
   const select_query = `
-  SELECT * FROM files WHERE id=?
+  SELECT * FROM files WHERE fid=?
   `
-  const result = await con.query(update_query, [file, id]);
-  const [[file_]] = await con.query(select_query, [id]);
+  const result = await con.query(update_query, [file, fid]);
+  const [[file_]] = await con.query(select_query, [fid]);
 
   await con.commit();
   await con.release();

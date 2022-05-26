@@ -14,7 +14,7 @@ router
 
 router
   .route('/point')
-  .post(validate(carHistValidation.createHistory), historyController.createPointHistory)
+  .post(upload.single('file'), validate(carHistValidation.createPointHistory), historyController.createPointHistory)
   .get(validate(carHistValidation.getPointHistory), historyController.getPointHistory);
 
 router
