@@ -25,7 +25,11 @@ const addHistory = async (body) => {
   } else if (car.onoff === 1 && body.onoff === 0) {
     const result = await endTrip(body);
     logger.debug(JSON.stringify(result));
+  } else {
+    const result = await saveLatestCarPosition(body);
+    logger.debug(JSON.stringify(result));
   }
+
   return History.createHistory(body);
 };
 
@@ -55,15 +59,22 @@ const getPointHistory = async (body) => {
 const startTrip = async (body) => {
   const { car_id, trip_seq, onoff, data } = body;
   const { colec_dt, lat, lng } = data[0];
-  await carService.updateCarStatById(car_id, { onoff });
+  await carService.updateCarStatById(car_id, { onoff, lat, lng });
   return History.createTrip(car_id, trip_seq, colec_dt, lat, lng);
 };
 
 const endTrip = async (body) => {
   const { car_id, trip_seq, onoff, data } = body;
   const { colec_dt, lat, lng } = data[data.length - 1];
-  await carService.updateCarStatById(car_id, { onoff });
+  await carService.updateCarStatById(car_id, { onoff, lat, lng });
   return History.updateTrip(car_id, trip_seq, colec_dt, lat, lng);
+};
+
+const saveLatestCarPosition = async (body) => {
+  const { car_id, data } = body;
+  const { colec_dt, lat, lng } = data[data.length - 1];
+  // TODO car status 에 colec_dt 추가
+  return  carService.updateCarStatById(car_id, { lat, lng });
 };
 
 const parseHHmmss = async (value) => {
