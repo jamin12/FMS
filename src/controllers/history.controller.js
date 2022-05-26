@@ -24,7 +24,7 @@ const queryTrip = catchAsync(async (req, res) => {
 });
 
 const getHistory = catchAsync(async (req, res) => {
-  const result = await historyService.getHistory(req.body);
+  const result = await historyService.getHistory(req.query);
   res.send({ result });
 });
 

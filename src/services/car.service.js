@@ -12,7 +12,7 @@ const createCar = async (carBody) => {
   return Car.create(carBody);
 };
 
-const getCarById = async (id) => {
+const getCarById = async (id) => {c
   return Car.findById(id);
 };
 
