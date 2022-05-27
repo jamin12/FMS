@@ -7,7 +7,7 @@ const { carId, objectId, datetime } = require('./custom.validation');
  */
 const createHistory = {
   body: Joi.object().keys({
-    car_id: Joi.string().required().custom(carId),
+    car_id: Joi.string().custom(carId).required(),
     trip_seq: Joi.custom(datetime).required(),
     onoff: Joi.number().min(0).max(1).required(),
     data: Joi.array().items(Joi.object().keys({
