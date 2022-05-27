@@ -38,6 +38,10 @@ const addDrivePoint = async (req) => {
   const file = await fileService.saveFile(req, parent_path);
   if (!file) {
     throw new ApiError('file not found.');
+  } else {
+    const { car_id, lat, lng } = req.body
+    const result = await carService.updateCarStatById(car_id, { lat, lng });
+    logger.debug(JSON.stringify(result));
   }
   logger.debug(JSON.stringify(file));
   req.body.fid = file.fid;
@@ -56,7 +60,6 @@ const getHistory = async (body) => {
 
 const getPointHistory = async (body) => {
   const { car_id, trip_seq } = body;
-  console.log(body)
   return History.findPointHistory(car_id, trip_seq);
 };
 
