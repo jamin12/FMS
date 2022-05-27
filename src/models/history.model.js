@@ -48,8 +48,8 @@ const createHistory = async (historyBody) => {
 
   let result;
   const insert_query = `
-    INSERT INTO drive_hst (car_id, colec_dt, trip_seq, lat, lng)
-    VALUES ?`;
+      INSERT INTO drive_hst (car_id, colec_dt, trip_seq, lat, lng)
+      VALUES ?`;
 
   const conn = await pool.getConnection();
   try {
@@ -72,8 +72,8 @@ const createPointHistory = async (historyBody) => {
 
   let result;
   const insert_query = `
-    INSERT INTO drive_point_hst (car_id, colec_dt, trip_seq, lat, lng, fid)
-    VALUES (?, ?, ?, ?, ?, ?)`;
+      INSERT INTO drive_point_hst (car_id, colec_dt, trip_seq, lat, lng, fid)
+      VALUES (?, ?, ?, ?, ?, ?)`;
 
   const conn = await pool.getConnection();
   try {
@@ -94,8 +94,8 @@ const createPointHistory = async (historyBody) => {
 const createTrip = async (car_id, trip_seq, colec_dt, lat, lng) => {
   let result;
   const insert_query = `
-    INSERT INTO trip_hst (car_id, trip_seq, st_lat, st_lng, start_dt, created_at)
-    VALUES (?, ?, ?, ?, ?, now())`;
+      INSERT INTO trip_hst (car_id, trip_seq, st_lat, st_lng, start_dt, created_at)
+      VALUES (?, ?, ?, ?, ?, now())`;
 
   const conn = await pool.getConnection();
   try {
@@ -116,13 +116,13 @@ const createTrip = async (car_id, trip_seq, colec_dt, lat, lng) => {
 const updateTrip = async (car_id, trip_seq, colec_dt, lat, lng) => {
   let result;
   const update_query = `
-    UPDATE trip_hst
-    SET fin_lat    = ?,
-        fin_lng    = ?,
-        end_dt     = ?,
-        updated_at = NOW()
-    WHERE car_id = ?
-      AND trip_seq = ?`;
+      UPDATE trip_hst
+      SET fin_lat    = ?,
+          fin_lng    = ?,
+          end_dt     = ?,
+          updated_at = NOW()
+      WHERE car_id = ?
+        AND trip_seq = ?`;
 
   const conn = await pool.getConnection();
   try {
@@ -143,26 +143,26 @@ const updateTrip = async (car_id, trip_seq, colec_dt, lat, lng) => {
 const findTripHistory = async (car_id, start_dt, end_dt) => {
   let result;
   const select_query = `
-    SELECT C.car_id                                          AS car_id,
-           C.car_no                                          AS car_no,
-           C.car_nm                                          AS car_nm,
-           DATE_FORMAT(TRIP.trip_seq, '%Y-%m-%d %H:%i:%S')   AS trip_seq,
-           DATE_FORMAT(TRIP.start_dt, '%Y-%m-%d %H:%i:%S')   AS start_dt,
-           DATE_FORMAT(TRIP.end_dt, '%Y-%m-%d %H:%i:%S')     AS end_dt,
-           TRIP.st_lat                                       AS st_lat,
-           TRIP.st_lng                                       AS st_lng,
-           TRIP.fin_lat                                      AS fin_lat,
-           TRIP.fin_lng                                      AS fin_lng,
-           DATE_FORMAT(TRIP.created_at, '%Y-%m-%d %H:%i:%S') AS created_at,
-           DATE_FORMAT(TRIP.updated_at, '%Y-%m-%d %H:%i:%S') AS updated_at
-    FROM car_bas C
-           LEFT JOIN car_stat CS ON C.car_id = CS.car_id
-           LEFT JOIN trip_hst TRIP on C.car_id = TRIP.car_id
-    WHERE C.car_id = ?
-      AND TRIP.start_dt >= ?
-      AND CASE
-            WHEN TRIP.end_dt IS NOT NULL THEN TRIP.end_dt <= ?
-            ELSE true END`;
+      SELECT C.car_id                                          AS car_id,
+             C.car_no                                          AS car_no,
+             C.car_nm                                          AS car_nm,
+             DATE_FORMAT(TRIP.trip_seq, '%Y-%m-%d %H:%i:%S')   AS trip_seq,
+             DATE_FORMAT(TRIP.start_dt, '%Y-%m-%d %H:%i:%S')   AS start_dt,
+             DATE_FORMAT(TRIP.end_dt, '%Y-%m-%d %H:%i:%S')     AS end_dt,
+             TRIP.st_lat                                       AS st_lat,
+             TRIP.st_lng                                       AS st_lng,
+             TRIP.fin_lat                                      AS fin_lat,
+             TRIP.fin_lng                                      AS fin_lng,
+             DATE_FORMAT(TRIP.created_at, '%Y-%m-%d %H:%i:%S') AS created_at,
+             DATE_FORMAT(TRIP.updated_at, '%Y-%m-%d %H:%i:%S') AS updated_at
+      FROM car_bas C
+               LEFT JOIN car_stat CS ON C.car_id = CS.car_id
+               LEFT JOIN trip_hst TRIP on C.car_id = TRIP.car_id
+      WHERE C.car_id = ?
+        AND TRIP.start_dt >= ?
+        AND CASE
+                WHEN TRIP.end_dt IS NOT NULL THEN TRIP.end_dt <= ?
+                ELSE true END`;
 
   const conn = await pool.getConnection();
   try {
@@ -183,24 +183,24 @@ const findTripHistory = async (car_id, start_dt, end_dt) => {
 const findHistory = async (car_id, trip_seq) => {
   let result;
   const select_query = `
-    WITH TRIP AS (
-      SELECT *
-      FROM trip_hst
-      WHERE car_id = ?
-        AND trip_seq = ?
-    )
-    SELECT#            DH.car_id,            DH.trip_seq,
-          DATE_FORMAT(DH.colec_dt, '%Y-%m-%d %H:%i:%S') AS colec_dt,
-          DH.lat                                        AS lat,
-          DH.lng                                        AS lng
-    FROM (
-           SELECT D.car_id, D.colec_dt, D.lat, D.lng, D.trip_seq
-           FROM drive_hst D,
-                TRIP
-           WHERE D.car_id = TRIP.car_id
-             AND colec_dt >= TRIP.start_dt
-             AND colec_dt <= TRIP.end_dt
-         ) DH`;
+      WITH TRIP AS (
+          SELECT *
+          FROM trip_hst
+          WHERE car_id = ?
+            AND trip_seq = ?
+      )
+      SELECT#            DH.car_id,            DH.trip_seq,
+            DATE_FORMAT(DH.colec_dt, '%Y-%m-%d %H:%i:%S') AS colec_dt,
+            DH.lat                                        AS lat,
+            DH.lng                                        AS lng
+      FROM (
+               SELECT D.car_id, D.colec_dt, D.lat, D.lng, D.trip_seq
+               FROM drive_hst D,
+                    TRIP
+               WHERE D.car_id = TRIP.car_id
+                 AND colec_dt >= TRIP.start_dt
+                 AND IF(TRIP.end_dt IS NOT NULL, colec_dt <= TRIP.end_dt, true)
+           ) DH`;
 
   const conn = await pool.getConnection();
   try {
@@ -225,25 +225,25 @@ const findHistory = async (car_id, trip_seq) => {
 const findPointHistory = async (car_id, trip_seq) => {
   let result;
   const select_query = `
-    WITH TRIP AS (
-      SELECT *
-      FROM trip_hst
-      WHERE car_id = ?
-        AND trip_seq = ?
-    )
-    SELECT DH.car_id,
-           DATE_FORMAT(DH.colec_dt, '%Y-%m-%d %H:%i:%S') AS colec_dt,
-           DH.lat,
-           DH.lng,
-           DH.fid
-    FROM (
-           SELECT D.car_id, D.colec_dt, D.lat, D.lng, D.fid
-           FROM drive_point_hst D,
-                TRIP
-           WHERE D.car_id = TRIP.car_id
-             AND colec_dt >= TRIP.start_dt
-             AND colec_dt <= TRIP.end_dt
-         ) DH`;
+      WITH TRIP AS (
+          SELECT *
+          FROM trip_hst
+          WHERE car_id = ?
+            AND trip_seq = ?
+      )
+      SELECT DH.car_id,
+             DATE_FORMAT(DH.colec_dt, '%Y-%m-%d %H:%i:%S') AS colec_dt,
+             DH.lat,
+             DH.lng,
+             DH.fid
+      FROM (
+               SELECT D.car_id, D.colec_dt, D.lat, D.lng, D.fid
+               FROM drive_point_hst D,
+                    TRIP
+               WHERE D.car_id = TRIP.car_id
+                 AND colec_dt >= TRIP.start_dt
+                 AND IF(TRIP.end_dt IS NOT NULL, colec_dt <= TRIP.end_dt, true)
+           ) DH`;
 
   const conn = await pool.getConnection();
   try {
