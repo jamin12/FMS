@@ -125,7 +125,7 @@ const isPasswordMatch = async (id, password) => {
 };
 
 const create = async (userBody) => {
-  const { email, password, details, role } = userBody;
+  const { email, username, password, details, role } = userBody;
 
   if (!validator.isEmail(email)) {
     throw new Error('Invalid email');
@@ -137,7 +137,16 @@ const create = async (userBody) => {
   const user = {
     id: uuid(),
     email: email,
+    username: username,
     password: await bcrypt.hash(password, 8)
+  };
+
+  const userDtails = {
+    id: user.id,
+    name: details.name,
+    mobile: details.mobile,
+    gender: details.gender,
+    memo: details.memo
   };
 
   if (role) user.role = role;
@@ -161,7 +170,7 @@ const create = async (userBody) => {
     await conn.release();
   }
   Object.assign(user, newUser);
-  user.details = await UserDetail.create({ id: user.id, name: details.name });
+  user.details = await UserDetail.create(userDtails);
 
   return user;
 };
