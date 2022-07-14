@@ -30,6 +30,10 @@ const defaultRoutes = [
   {
     path: '/history',
     route: historyRoute,
+  },
+  {
+    path: '/user',
+    route: userRoute,
   }
 ];
 

@@ -125,7 +125,7 @@ const isPasswordMatch = async (id, password) => {
 };
 
 const create = async (userBody) => {
-  const { email, mobile, password, details, role } = userBody;
+  const { email, password, details, role } = userBody;
 
   if (!validator.isEmail(email)) {
     throw new Error('Invalid email');
@@ -137,7 +137,6 @@ const create = async (userBody) => {
   const user = {
     id: uuid(),
     email: email,
-    mobile: mobile,
     password: await bcrypt.hash(password, 8)
   };
 

@@ -14,7 +14,7 @@ const createCar = {
 };
 
 const getCar = {
-  path: Joi.object().keys({
+  query: Joi.object().keys({
     car_id: Joi.string().required().custom(carId),
     car_no: Joi.string(),
     car_nm: Joi.string()
@@ -22,7 +22,7 @@ const getCar = {
 };
 
 const getCars = {
-  path: Joi.object().keys({
+  query: Joi.object().keys({
     car_id: Joi.string().required().custom(carId),
     car_no: Joi.string(),
     car_nm: Joi.string()
@@ -30,7 +30,7 @@ const getCars = {
 };
 
 const updateCar = {
-  path: Joi.object().keys({
+  query: Joi.object().keys({
     car_id: Joi.string().required().custom(carId)
   }),
   body: Joi.object().keys({
@@ -40,7 +40,7 @@ const updateCar = {
 };
 
 const deleteCar = {
-  path: Joi.object().keys({
+  query: Joi.object().keys({
     car_id: Joi.string().required().custom(carId)
   })
 };

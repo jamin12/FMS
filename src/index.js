@@ -47,3 +47,10 @@ process.on('SIGTERM', () => {
     server.close();
   }
 });
+
+process.on('SIGINT', () => {
+  logger.info('SIGINT received');
+  if (server) {
+    server.close();
+  }
+});
