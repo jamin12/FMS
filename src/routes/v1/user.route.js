@@ -14,9 +14,13 @@ router
   .get(auth('getUsers'), validate(userValidation.getUsers), userController.getUsers);
 
 router
+  .route('/login')
+  .post(validate(userValidation.loginUser), userController.loginUser)
+
+router
   .route('/:userId(\\w{8}-\\w{4}-\\w{4}-\\w{4}-\\w{12})')
   .get(auth(), validate(userValidation.getUser), userController.getUser)
-  .patch(auth('manageUsers'), validate(userValidation.updateUser), userController.updateUser)
+  .patch(auth('admin'), validate(userValidation.updateUser), userController.updateUser)
   .delete(auth('manageUsers'), validate(userValidation.deleteUser), userController.deleteUser);
 
 router

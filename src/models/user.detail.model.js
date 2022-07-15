@@ -35,7 +35,7 @@ const findById = async (id) => {
   return details;
 };
 
-const save = async (userDetail) => {
+const save = async (userDetail, id) => {
   let details;
 
   const query = `
@@ -46,8 +46,8 @@ const save = async (userDetail) => {
   const conn = await pool.getConnection();
   try {
     await conn.beginTransaction();
-    await conn.query(query, [userDetail, userDetail.id]);
-    [[details]] = await conn.query(select_query, [userDetail.id]);
+    await conn.query(query, [userDetail, id]);
+    [[details]] = await conn.query(select_query, [id]);
     await conn.commit();
   } catch (err) {
     await conn.rollback();

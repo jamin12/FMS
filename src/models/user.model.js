@@ -37,7 +37,7 @@ const user_col = [
   'mobile',
   'name',
   'accept_terms',
-  'email_verified',
+  'email',
   'mobile_verified'
 ];
 
@@ -80,7 +80,7 @@ const isEmailTaken = async (email) => {
 const isMobileTaken = async (mobile) => {
   const con = await pool.getConnection(async conn => conn);
   const query = `
-    SELECT mobile FROM users WHERE mobile = ?
+    SELECT mobile FROM user_details WHERE mobile = ?
   `;
   const [user] = await con.query(query, [mobile]);
   await con.release();
@@ -212,15 +212,22 @@ const save = async (prev, user) => {
     if (prev.password !== user.password) user.password = await bcrypt.hash(user.password, 8);
 
     const con = await pool.getConnection(async conn => conn);
+
+    /* `update_at`	datetime	null default current_timestamp on update current_timestamp 
+    database updated_at컬럼에 on update가 달려 있어야함 */
     const query = `
-    UPDATE users SET ? AND updated_at = current_timestamp WHERE id = ?`;
+    UPDATE users SET ? WHERE id = ?`;
     await con.query(query, [user, user.id]);
     await con.release();
   }
   if (user_details) {
-    await UserDetail.save(user_details);
+    await UserDetail.save(user_details, user.id);
   }
   return findById(user.id);
+};
+
+const loginUser = async (userLoginInfo) => {
+  const { id, password } = userLoginInfo;
 };
 
 const remove = async (id) => {
@@ -258,5 +265,6 @@ module.exports = {
   findOne,
   save,
   remove,
-  toJSON
+  toJSON,
+  loginUser,
 };

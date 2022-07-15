@@ -32,6 +32,10 @@ const getUserByUsername = async (username) => {
   return User.findOne({ username });
 };
 
+const loginUser = async (user) => {
+  return User.loginUser(user);
+};
+
 /**
  *
  * @param {String} userId
@@ -71,12 +75,10 @@ const updateUserById = async (userId, updateBody) => {
   if (updateBody.mobile && (await User.isMobileTaken(updateBody.mobile, userId))) {
     throw new ApiError(httpStatus.BAD_REQUEST, 'Mobile already taken');
   }
-  if (updateBody.email && (await User.isUsernameTaken(updateBody.username, userId))) {
-    throw new ApiError(httpStatus.BAD_REQUEST, 'Username already taken');
-  }
+
   const user = JSON.parse(JSON.stringify(prev));
   Object.assign(user, updateBody);
-  console.log({ user });
+
   await User.save(prev, user);
 
   // TODO: 프로필 이미지 변경 시 기존 파일 삭제
@@ -108,5 +110,6 @@ module.exports = {
   getUserByMobile,
   getUserByUsername,
   updateUserById,
-  deleteUserById
+  deleteUserById,
+  loginUser,
 };
