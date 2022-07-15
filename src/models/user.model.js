@@ -234,12 +234,13 @@ const remove = async (id) => {
   const con = await pool.getConnection(async conn => conn);
   const user = await findById(id);
 
+  await UserDetail.remove(id);
+  
   const query = `
   DELETE FROM users WHERE id = ?
   `;
   const result = await con.query(query, [id]);
   await con.release();
-  await UserDetail.remove(id);
 
   return user;
 };

@@ -21,7 +21,7 @@ router
   .route('/:userId(\\w{8}-\\w{4}-\\w{4}-\\w{4}-\\w{12})')
   .get(auth(), validate(userValidation.getUser), userController.getUser)
   .patch(auth('admin'), validate(userValidation.updateUser), userController.updateUser)
-  .delete(auth('manageUsers'), validate(userValidation.deleteUser), userController.deleteUser);
+  .delete(auth('admin'), validate(userValidation.deleteUser), userController.deleteUser);
 
 router
   .route('/my-info')
