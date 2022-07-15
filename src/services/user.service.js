@@ -32,9 +32,6 @@ const getUserByUsername = async (username) => {
   return User.findOne({ username });
 };
 
-const loginUser = async (user) => {
-  return User.loginUser(user);
-};
 
 /**
  *
@@ -111,5 +108,4 @@ module.exports = {
   getUserByUsername,
   updateUserById,
   deleteUserById,
-  loginUser,
 };

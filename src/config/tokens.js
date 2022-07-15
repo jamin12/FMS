@@ -1,5 +1,5 @@
 const tokenTypes = {
-  ACCESS: 'access',
+  AUTHORIZATION: 'Authorization',
   REFRESH: 'refresh',
   RESET_PASSWORD: 'resetPassword',
   VERIFY_EMAIL: 'verifyEmail',

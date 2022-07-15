@@ -10,16 +10,16 @@ const router = express.Router();
 
 router
   .route('/')
-  .post(auth('admin'), validate(userValidation.createUser), userController.createUser)
-  .get(auth('getUsers'), validate(userValidation.getUsers), userController.getUsers);
+  .post(validate(userValidation.createUser), userController.createUser)
+  .get(auth('manageUsers'), validate(userValidation.getUsers), userController.getUsers);
 
 router
   .route('/login')
-  .post(validate(userValidation.loginUser), userController.loginUser)
+  .post(validate(userValidation.loginUser), userController.loginUser);
 
 router
   .route('/:userId(\\w{8}-\\w{4}-\\w{4}-\\w{4}-\\w{12})')
-  .get(auth(), validate(userValidation.getUser), userController.getUser)
+  .get(auth('admin'), validate(userValidation.getUser), userController.getUser)
   .patch(auth('admin'), validate(userValidation.updateUser), userController.updateUser)
   .delete(auth('admin'), validate(userValidation.deleteUser), userController.deleteUser);
 
@@ -31,7 +31,6 @@ router
 router
   .route('/my-info/profile')
   .patch(auth(), validate(uploadValidation.uploadFile), upload.single('file'), myInfoController.updateProfile);
-
 
 module.exports = router;
 

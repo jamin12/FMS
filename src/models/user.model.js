@@ -226,10 +226,6 @@ const save = async (prev, user) => {
   return findById(user.id);
 };
 
-const loginUser = async (userLoginInfo) => {
-  const { id, password } = userLoginInfo;
-};
-
 const remove = async (id) => {
   const con = await pool.getConnection(async conn => conn);
   const user = await findById(id);
@@ -267,5 +263,4 @@ module.exports = {
   save,
   remove,
   toJSON,
-  loginUser,
 };
