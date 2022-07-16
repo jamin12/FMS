@@ -51,7 +51,9 @@ const loginUser = catchAsync(async (req, res, next) => {
       if (error) {
         return res.status(httpStatus[400]).send();
       }
-      const token = jwt.sign({ id: user, type: 'Authorization' }, myconfig.jwt.secret);
+      const token = jwt.sign({ id: user, type: 'Authorization' }, myconfig.jwt.secret, {
+        expiresIn: `${String(myconfig.jwt.accessExpirationMinutes)}m`,
+      });
       return res.send({ user, token });
     });
   })(req, res, next);

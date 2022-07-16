@@ -19,7 +19,7 @@ router
 
 router
   .route('/:userId(\\w{8}-\\w{4}-\\w{4}-\\w{4}-\\w{12})')
-  .get(auth('admin'), validate(userValidation.getUser), userController.getUser)
+  .get(auth('manageUsers'), validate(userValidation.getUser), userController.getUser)
   .patch(auth('admin'), validate(userValidation.updateUser), userController.updateUser)
   .delete(auth('admin'), validate(userValidation.deleteUser), userController.deleteUser);
 
