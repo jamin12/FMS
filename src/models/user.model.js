@@ -203,6 +203,26 @@ const findOne = async (filter) => {
   return joinUserDetail(user);
 };
 
+const findAll = async (filter, options) => {
+  const { name, role } = filter;
+  const { sortBy, sortOption, limit, page } = options;
+  let where_stmt = '';
+
+  if (name) where_stmt += (where_stmt === '' ? '' : 'AND ') + `username='${name}' `;
+  if (role) where_stmt += (where_stmt === '' ? '' : 'AND ') + `role='${role}' `;
+  if (sortBy) where_stmt += 'order by ' +  sortBy + ' ' + sortOption + ' ';
+  if (limit) where_stmt += 'limit ' + (page ? `${page}, ` : '') + limit;
+
+  const con = await pool.getConnection(async conn => conn);
+  const query = `
+  SELECT * FROM users WHERE ${where_stmt}
+  `;
+  const [user] = await con.query(query);
+  await con.release();
+
+  return joinUserDetail(user);
+};
+
 const save = async (prev, user) => {
   const result = await splitUserDetails(user);
   const user_details = result.userDetail;
@@ -252,6 +272,20 @@ const toJSON = (user) => {
   return user;
 };
 
+// 페이징 처리
+const pageResult = (limit, curpage) => {
+    // 디폴트 페이지 가져올 사이즈
+    const DEFAULT_START_PAGE = 1;
+    const DEFAULT_PAGE_SIZE = limit ? limit : 5;
+    
+  // 페이지가 0보다 작으면 기본 페이지 적용
+  if (curpage <= 0)  curpage = DEFAULT_START_PAGE
+  return {
+      offset: (curpage - 1) * DEFAULT_PAGE_SIZE,
+      limit: DEFAULT_PAGE_SIZE
+  };
+}
+
 module.exports = {
   isEmailTaken,
   isMobileTaken,
@@ -263,4 +297,5 @@ module.exports = {
   save,
   remove,
   toJSON,
+  findAll,
 };

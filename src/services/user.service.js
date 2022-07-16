@@ -99,9 +99,13 @@ const deleteUserById = async (userId) => {
   return user;
 };
 
+const queryUsers = async (filter, options) => {
+  return User.findAll(filter, options);
+};
+
 module.exports = {
   createUser,
-  // queryUsers,
+  queryUsers,
   getUserById,
   getUserByEmail,
   getUserByMobile,
