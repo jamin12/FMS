@@ -5,7 +5,7 @@ const { carId, objectId } = require('./custom.validation');
  * 차량 등록
  * @type {{body: Joi.ObjectSchema<any>}}
  */
-const createCar = {
+const createCarManage = {
   body: Joi.object().keys({
     car_id: Joi.string().required().custom(carId),
     car_no: Joi.string(),
@@ -15,14 +15,12 @@ const createCar = {
 };
 
 const getCar = {
-  query: Joi.object().keys({
-    car_id: Joi.string().required().custom(carId),
+  params: Joi.object().keys({
     car_no: Joi.string(),
-    car_nm: Joi.string()
-  })
+  }),
 };
 
-const getManageCars = {
+const getCarsManage = {
   query: Joi.object().keys({
     car_id: Joi.string(),
     car_no: Joi.string(),
@@ -35,27 +33,29 @@ const getManageCars = {
   }),
 };
 
-const updateCar = {
-  query: Joi.object().keys({
-    car_id: Joi.string().required().custom(carId)
+const updateCarManage = {
+  params: Joi.object().keys({
+    car_no: Joi.string().required(),
   }),
   body: Joi.object().keys({
+    car_id: Joi.string(),
     car_no: Joi.string(),
-    car_nm: Joi.string()
-  })
+    car_nm: Joi.string(),
+    car_model_nm: Joi.string(),
+  }),
 };
 
-const deleteCar = {
-  query: Joi.object().keys({
-    car_id: Joi.string().required().custom(carId)
-  })
+const deleteCarManage = {
+  params: Joi.object().keys({
+    car_no: Joi.string().required().custom(carId)
+  }),
 };
 
 module.exports = {
   getCar,
   // getCars,
-  createCar,
-  updateCar,
-  deleteCar,
-  getManageCars,
+  createCarManage,
+  updateCarManage,
+  deleteCarManage,
+  getCarsManage,
 };

@@ -9,14 +9,14 @@ const router = express.Router();
 
 router
   .route('/manage')
-  .post(auth('manageUsers'), validate(carValidation.createCar), carController.createCar)
-  .get(auth('manageUsers'), validate(carValidation.getManageCars), carController.getCarsManage);
+  .post(auth('manageUsers'), validate(carValidation.createCarManage), carController.createCarManage)
+  .get(auth('manageUsers'), validate(carValidation.getCarsManage), carController.getCarsManage);
 
 router
-  .route('/:car_id')
-  .get(validate(carValidation.getCar), carController.getCar)
-  .patch(validate(carValidation.updateCar), carController.updateCar)
-  .delete(validate(carValidation.deleteCar), carController.deleteCar);
+  .route('/manage/:car_no')
+  .get(auth('manageUsers'), validate(carValidation.getCar), carController.getCarManage)
+  .patch(auth('manageUsers'), validate(carValidation.updateCarManage), carController.updateCarManage)
+  .delete(auth('manageUsers'), validate(carValidation.deleteCarManage), carController.deleteCarManage);
 
 module.exports = router;
 

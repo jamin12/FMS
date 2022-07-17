@@ -5,41 +5,45 @@ const catchAsync = require('../utils/catchAsync');
 const logger = require('../config/logger');
 const { carService } = require('../services');
 
-const createCar = catchAsync(async (req, res) => {
-  const car = await carService.createCar(req.body);
+/*******************************************************
+차량 관리
+******************************************************/
+
+const createCarManage = catchAsync(async (req, res) => {
+  const car = await carService.createCarManage(req.body);
   res.status(httpStatus.CREATED).send(car);
 });
 
 const getCarsManage = catchAsync(async (req, res) => {
   const filter = pick(req.query, ['car_id', 'car_no', 'car_nm', 'car_model_nm']);
   const options = pick(req.query, ['sortBy', 'limit', 'page']);
-  const result = await carService.queryCars(filter, options);
+  const result = await carService.queryCarsManage(filter, options);
   res.send({ result });
 });
 
-const getCar = catchAsync(async (req, res) => {
-  const car = await carService.getCarById(req.params.car_id);
+const getCarManage = catchAsync(async (req, res) => {
+  const car = await carService.getCarByNoManage(req.params.car_no);
   if (!car) {
     throw new ApiError(httpStatus.NOT_FOUND, 'User not found');
   }
   res.send({ car });
 });
 
-const updateCar = catchAsync(async (req, res) => {
-  const car = await carService.updateCarById(req.params.car_id, req.body);
+const updateCarManage = catchAsync(async (req, res) => {
+  const car = await carService.updateCarById(req.params.car_no, req.body);
   res.send({ car });
 });
 
-const deleteCar = catchAsync(async (req, res) => {
-  await carService.deleteCarById(req.params.car_id);
+const deleteCarManage = catchAsync(async (req, res) => {
+  await carService.deleteCarById(req.params.car_no);
   res.status(httpStatus.NO_CONTENT).send();
 });
 
 module.exports = {
-  createCar,
+  createCarManage,
   // getCars,
-  getCar,
-  updateCar,
-  deleteCar,
+  getCarManage,
+  updateCarManage,
+  deleteCarManage,
   getCarsManage,
 };
