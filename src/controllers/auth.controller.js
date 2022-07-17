@@ -1,7 +1,10 @@
 const httpStatus = require('http-status');
+const passport = require('passport');
+const jwt = require('jsonwebtoken');
 const catchAsync = require('../utils/catchAsync');
 const User = require('../models/user.model');
 const { authService, userService, tokenService, emailService } = require('../services');
+const myconfig = require('../config/config');
 
 const register = catchAsync(async (req, res) => {
   const user = await userService.createUser(req.body);
@@ -9,11 +12,21 @@ const register = catchAsync(async (req, res) => {
   res.status(httpStatus.CREATED).send({ user: User.toJSON(user), tokens });
 });
 
-const login = catchAsync(async (req, res) => {
-  const { email, password } = req.body;
-  const user = await authService.loginUserWithEmailAndPassword(email, password);
-  const tokens = await tokenService.generateAuthTokens(user);
-  res.send({ user: User.toJSON(user), tokens });
+const login = catchAsync(async (req, res, next) => {
+  await passport.authenticate('local', { session: false }, (err, user) => {
+    if (err || !user) {
+      return res.status(httpStatus[400]).send();
+    }
+    req.login(user, { session: false }, (error) => {
+      if (error) {
+        return res.status(httpStatus[400]).send();
+      }
+      const token = jwt.sign({ id: user, type: 'Authorization' }, myconfig.jwt.secret, {
+        expiresIn: `${String(myconfig.jwt.accessExpirationMinutes)}m`,
+      });
+      return res.send({ user, token });
+    });
+  })(req, res, next);
 });
 
 const logout = catchAsync(async (req, res) => {

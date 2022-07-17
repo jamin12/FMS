@@ -11,11 +11,7 @@ const router = express.Router();
 router
   .route('/')
   .post(validate(userValidation.createUser), userController.createUser)
-  .get(auth('manageUsers'), validate(userValidation.getUsers), userController.getUsers);
-
-router
-  .route('/login')
-  .post(validate(userValidation.loginUser), userController.loginUser);
+  .get(validate(userValidation.getUsers), userController.getUsers);
 
 router
   .route('/:userId(\\w{8}-\\w{4}-\\w{4}-\\w{4}-\\w{12})')

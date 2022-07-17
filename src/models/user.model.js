@@ -215,7 +215,7 @@ const findAll = async (filter, options) => {
 
   const con = await pool.getConnection(async conn => conn);
   const query = `
-  SELECT * FROM users WHERE ${where_stmt}
+  SELECT * FROM users ${(where_stmt ? 'WHERE ' + where_stmt : '')} 
   `;
   const [user] = await con.query(query);
   await con.release();

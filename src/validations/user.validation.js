@@ -59,14 +59,6 @@ const deleteUser = {
   }),
 };
 
-const loginUser = {
-  body: Joi.object()
-    .keys({
-      id: Joi.string().required(),
-      password: Joi.string().required(),
-    })
-    .min(1),
-};
 
 module.exports = {
   createUser,
@@ -74,5 +66,4 @@ module.exports = {
   getUser,
   updateUser,
   deleteUser,
-  loginUser,
 };
