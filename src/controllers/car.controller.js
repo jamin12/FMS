@@ -10,11 +10,10 @@ const createCar = catchAsync(async (req, res) => {
   res.status(httpStatus.CREATED).send(car);
 });
 
-const getCars = catchAsync(async (req, res) => {
-  // const filter = pick(req.query, ['car_id', 'car_no', 'car_nm']);
-  // const options = pick(req.query, ['sortBy', 'limit', 'page']);
-  console.log('getCars')
-  const result = await carService.getCars();
+const getCarsManage = catchAsync(async (req, res) => {
+  const filter = pick(req.query, ['car_id', 'car_no', 'car_nm', 'car_model_nm']);
+  const options = pick(req.query, ['sortBy', 'limit', 'page']);
+  const result = await carService.queryCars(filter, options);
   res.send({ result });
 });
 
@@ -38,8 +37,9 @@ const deleteCar = catchAsync(async (req, res) => {
 
 module.exports = {
   createCar,
-  getCars,
+  // getCars,
   getCar,
   updateCar,
-  deleteCar
+  deleteCar,
+  getCarsManage,
 };

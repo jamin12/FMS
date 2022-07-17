@@ -7,7 +7,7 @@ const catchAsync = require('../utils/catchAsync');
 const User = require('../models/user.model');
 const logger = require('../config/logger');
 const { userService } = require('../services');
-const myconfig = require('../config/config');
+
 
 const createUser = catchAsync(async (req, res) => {
   const user = await userService.createUser(req.body);
@@ -42,28 +42,10 @@ const deleteUser = catchAsync(async (req, res) => {
   res.status(httpStatus.NO_CONTENT).send();
 });
 
-const loginUser = catchAsync(async (req, res, next) => {
-  await passport.authenticate('local', { session: false }, (err, user) => {
-    if (err || !user) {
-      return res.status(httpStatus[400]).send();
-    }
-    req.login(user, { session: false }, (error) => {
-      if (error) {
-        return res.status(httpStatus[400]).send();
-      }
-      const token = jwt.sign({ id: user, type: 'Authorization' }, myconfig.jwt.secret, {
-        expiresIn: `${String(myconfig.jwt.accessExpirationMinutes)}m`,
-      });
-      return res.send({ user, token });
-    });
-  })(req, res, next);
-});
-
 module.exports = {
   createUser,
   getUsers,
   getUser,
   updateUser,
   deleteUser,
-  loginUser,
 };

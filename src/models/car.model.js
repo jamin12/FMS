@@ -22,6 +22,7 @@ const car_col = [
   'car_id',
   'car_no',
   'car_nm',
+  'car_model_nm',
   'lat',
   'lng',
   'onoff',
@@ -56,12 +57,13 @@ const isCarIdTaken = async (car_id) => {
 };
 
 const create = async (carBody) => {
-  const { car_id, car_nm, car_no } = carBody;
+  const { car_id, car_nm, car_no, car_model_nm } = carBody;
 
   const car = {
     car_id,
     car_nm,
-    car_no
+    car_no,
+    car_model_nm,
   };
 
   let newCar;
@@ -159,6 +161,24 @@ const findAll = async () => {
   return cars;
 };
 
+const queryCars = async (filter, options) => {
+  const { sortBy, sortOption, limit, page } = options;
+  let where_stmt = await condition(filter);
+  let option_stmt = '';
+
+  if (sortBy) option_stmt += `order by ${sortBy} ${sortOption || ''} `;
+  if (limit) option_stmt += 'limit ' + (page ? `${page}, ` : '') + limit;
+
+  const con = await pool.getConnection(async conn => conn);
+  const query = `
+  SELECT * FROM car_bas ${where_stmt ? 'WHERE ' + where_stmt : ''} ${option_stmt || ''}
+  `;
+  const [cars] = await con.query(query);
+  await con.release();
+
+  return cars;
+};
+
 const save = async (prev, car) => {
 
   if (car) {
@@ -243,5 +263,6 @@ module.exports = {
   save,
   saveState,
   remove,
-  toJSON
+  toJSON,
+  queryCars,
 };

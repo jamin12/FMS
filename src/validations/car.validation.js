@@ -9,8 +9,9 @@ const createCar = {
   body: Joi.object().keys({
     car_id: Joi.string().required().custom(carId),
     car_no: Joi.string(),
-    car_nm: Joi.string()
-  })
+    car_nm: Joi.string(),
+    car_model_nm: Joi.string(),
+  }),
 };
 
 const getCar = {
@@ -21,12 +22,17 @@ const getCar = {
   })
 };
 
-const getCars = {
+const getManageCars = {
   query: Joi.object().keys({
-    car_id: Joi.string().required().custom(carId),
+    car_id: Joi.string(),
     car_no: Joi.string(),
-    car_nm: Joi.string()
-  })
+    car_nm: Joi.string(),
+    car_model_nm: Joi.string(),
+    sortBy: Joi.string(),
+    sortOption: Joi.string().valid('asc', 'desc'),
+    limit: Joi.number().integer(),
+    page: Joi.number().integer(),
+  }),
 };
 
 const updateCar = {
@@ -47,8 +53,9 @@ const deleteCar = {
 
 module.exports = {
   getCar,
-  getCars,
+  // getCars,
   createCar,
   updateCar,
-  deleteCar
+  deleteCar,
+  getManageCars,
 };

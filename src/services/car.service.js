@@ -21,7 +21,7 @@ const getCars = async () => {
 };
 
 const queryCars = async (filter, option) => {
-
+  return Car.queryCars(filter, option);
 };
 
 const updateCarById = async (car_id, updateBody) => {
@@ -71,6 +71,7 @@ module.exports = {
   queryCars,
   getCarById,
   getCars,
-  updateCarById, updateCarStatById,
-  deleteCarById
+  updateCarById,
+  updateCarStatById,
+  deleteCarById,
 };

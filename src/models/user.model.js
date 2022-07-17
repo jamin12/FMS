@@ -207,15 +207,16 @@ const findAll = async (filter, options) => {
   const { name, role } = filter;
   const { sortBy, sortOption, limit, page } = options;
   let where_stmt = '';
+  let option_stmt = '';
 
   if (name) where_stmt += (where_stmt === '' ? '' : 'AND ') + `username='${name}' `;
   if (role) where_stmt += (where_stmt === '' ? '' : 'AND ') + `role='${role}' `;
-  if (sortBy) where_stmt += 'order by ' +  sortBy + ' ' + sortOption + ' ';
-  if (limit) where_stmt += 'limit ' + (page ? `${page}, ` : '') + limit;
+  if (sortBy) option_stmt += `order by ${sortBy} ${sortOption || ''} `;
+  if (limit) option_stmt += 'limit ' + (page ? `${page}, ` : '') + limit;
 
   const con = await pool.getConnection(async conn => conn);
   const query = `
-  SELECT * FROM users ${(where_stmt ? 'WHERE ' + where_stmt : '')} 
+  SELECT * FROM users ${where_stmt ? 'WHERE ' + where_stmt : ''}  ${option_stmt || ''}
   `;
   const [user] = await con.query(query);
   await con.release();

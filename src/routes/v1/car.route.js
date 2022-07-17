@@ -8,9 +8,9 @@ const carController = require('../../controllers/car.controller');
 const router = express.Router();
 
 router
-  .route('/')
-  .post(validate(carValidation.createCar), carController.createCar)
-  .get(carController.getCars);
+  .route('/manage')
+  .post(auth('manageUsers'), validate(carValidation.createCar), carController.createCar)
+  .get(auth('manageUsers'), validate(carValidation.getManageCars), carController.getCarsManage);
 
 router
   .route('/:car_id')
