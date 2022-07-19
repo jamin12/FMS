@@ -55,10 +55,15 @@ const updateCarState = {
     car_no: Joi.string().required(),
   }),
   body: Joi.object().keys({
-    car_no: Joi.string(),
-    lat: Joi.number().required(),
-    lng: Joi.number().required(),
-    onoff: Joi.number().required().valid(0, 1),
+    carstat: Joi.object().keys({
+      lat: Joi.number().required(),
+      lng: Joi.number().required(),
+      onoff: Joi.number().required().valid(0, 1),
+    }),
+    triphis: Joi.object().keys({
+      car_no: Joi.string().required(),
+
+    }),
   }),
 }
 module.exports = {

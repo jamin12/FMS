@@ -59,8 +59,8 @@ const isCarIdTaken = async (car_id) => {
 const isCarNoTaken = async (car_no) => {
   const conn = await pool.getConnection(async conn => conn);
   const query = `
-    SELECT car_no
-    FROM car_bas
+    SELECT car_no 
+    FROM car_bas 
     WHERE car_no = ?
   `;
   const [car] = await conn.query(query, [car_no]);
@@ -73,6 +73,19 @@ const isCarNoTaken = async (car_no) => {
   }
   return true;
 };
+
+const getIdByNo = async (car_no) => {
+  const conn = await pool.getConnection(async conn => conn);
+  const query = `
+    SELECT car_id
+    FROM car_bas
+    WHERE car_no = ?
+  `;
+  const [[car]] = await conn.query(query, [car_no]);
+  await conn.release();
+  
+  return car.car_id;
+}
 
 const create = async (carBody) => {
   const { car_id, car_nm, car_no, car_model_nm } = carBody;
@@ -89,8 +102,8 @@ const create = async (carBody) => {
     INSERT INTO car_bas
     SET ?`;
   const insert_stat_query = `
-    INSERT INTO car_stat (car_id,car_no)
-    VALUES (?,?)`;
+    INSERT INTO car_stat (car_id)
+    VALUES (?)`;
   const select_query = `
     SELECT *
     FROM car_bas
@@ -100,7 +113,7 @@ const create = async (carBody) => {
   try {
     await conn.beginTransaction();
     await conn.query(insert_bas_query, [car]);
-    await conn.query(insert_stat_query, [car_id,car_no]);
+    await conn.query(insert_stat_query, [car_id]);
     [[newCar]] = await conn.query(select_query, [car_id]);
     await conn.commit();
   } catch (err) {
@@ -128,19 +141,6 @@ const findById = async (id) => {
     FROM car_bas C
            LEFT JOIN car_stat CS ON C.car_id = CS.car_id
     WHERE C.car_id = ?
-  `;
-  const [[car]] = await con.query(query, [id]);
-  await con.release();
-
-  return car;
-};
-
-const findByNoManage = async (id) => {
-  const con = await pool.getConnection(async conn => conn);
-  const query = `
-    SELECT *
-    FROM car_bas C
-    WHERE C.car_no = ?
   `;
   const [[car]] = await con.query(query, [id]);
   await con.release();
@@ -230,9 +230,9 @@ const save = async (prev, car) => {
       UPDATE car_bas
       SET ?,
           updated_at = now()
-      WHERE car_no = ?
+      WHERE car_id = ?
     `;
-    await con.query(query, [car, prev.car_no]);
+    await con.query(query, [car, prev.car_id]);
     await con.release();
   }
 
@@ -259,14 +259,14 @@ const update_state = async (car_id, lat, lng, onoff) => {
   condition();
 };
 
-const remove = async (car_no) => {
-  const car = await findById(car_no);
-  const { car_id } = await findByNoManage(car_no);
+const remove = async (car_id) => {
+  const car = await findById(car_id);
+
 
   const delete_bas_query = `
     DELETE
     FROM car_bas
-    WHERE car_no = ?`;
+    WHERE car_id = ?`;
   const delete_stat_query = `
     DELETE
     FROM car_stat
@@ -275,7 +275,7 @@ const remove = async (car_no) => {
   const conn = await pool.getConnection();
   try {
     await conn.beginTransaction();
-    await conn.query(delete_bas_query, [car_no]);
+    await conn.query(delete_bas_query, [car_id]);
     await conn.query(delete_stat_query, [car_id]);
     await conn.commit();
   } catch (err) {
@@ -310,6 +310,6 @@ module.exports = {
   remove,
   toJSON,
   queryCarsManage,
-  findByNoManage,
   isCarNoTaken,
+  getIdByNo,
 };

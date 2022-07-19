@@ -19,8 +19,8 @@ router
   .delete(auth('manageUsers'), validate(carValidation.deleteCarManage), carController.deleteCarManage);
 
 router
-  .route('/carstate/:car_no')
-  .patch(validate(carValidation.updateCarState), carController.updateCarStateByNo)
+  .route('/driveinfo/:car_no')
+  .post(validate(carValidation.updateCarState), carController.updateCarStateByNo)
 
 router
   .route('/')
@@ -29,6 +29,7 @@ router
 router
   .route('/drivehistory/:car_no')
   .get()
+
 module.exports = router;
 
 /**

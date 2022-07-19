@@ -22,7 +22,7 @@ const getCarsManage = catchAsync(async (req, res) => {
 });
 
 const getCarManage = catchAsync(async (req, res) => {
-  const car = await carService.getCarByNoManage(req.params.car_no);
+  const car = await carService.getCarByIdManage(req.params.car_no);
   if (!car) {
     throw new ApiError(httpStatus.NOT_FOUND, 'User not found');
   }
@@ -30,13 +30,13 @@ const getCarManage = catchAsync(async (req, res) => {
 });
 
 const updateCarManage = catchAsync(async (req, res) => {
-  const car = await carService.updateCarByNo(req.params.car_no, req.body);
+  const car = await carService.updateCarById(req.params.car_no, req.body);
   res.send({ car });
 });
 
 const deleteCarManage = catchAsync(async (req, res) => {
-  await carService.deleteCarById(req.params.car_no);
-  res.status(httpStatus.NO_CONTENT).send();
+  const deleted_car = await carService.deleteCarById(req.params.car_no);
+  res.status(httpStatus.NO_CONTENT).send(deleted_car);
 });
 
 

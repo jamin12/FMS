@@ -17,16 +17,18 @@ const createCarManage = async (carBody) => {
   return Car.create(carBody);
 };
 
-const getCarByNoManage = async (id) => {
-  return Car.findByNoManage(id);
+const getCarByIdManage = async (id) => {
+  const car_id = await Car.getIdByNo(id);
+  return Car.findById(car_id);
 };
 
 const queryCarsManage = async (filter, option) => {
   return Car.queryCarsManage(filter, option);
 };
 
-const updateCarByNo = async (car_no, updateBody) => {
-  const prev = await getCarByNoManage(car_no);
+const updateCarById = async (car_no, updateBody) => {
+  const car_id = await Car.getIdByNo(car_no);
+  const prev = await Car.findById(car_id);
   if (!prev) {
     throw new ApiError(httpStatus.NOT_FOUND, 'Car not found');
   }
@@ -37,19 +39,17 @@ const updateCarByNo = async (car_no, updateBody) => {
   // Object.assign(car, updateBody);
   // console.log({ car: car });
   const car = await Car.save(prev, updateBody);
-  if(updateBody.car_no){
-    await Car.saveState(prev, { car_no:updateBody.car_no } );
-  }
   
   return car;
 };
 
 const deleteCarById = async (car_no) => {
-  const car = await getCarByNoManage(car_no);
+  const car_id = await Car.getIdByNo(car_no);
+  const car = await Car.findById(car_id);
   if (!car) {
     throw new ApiError(httpStatus.NOT_FOUND, 'Car not found');
   }
-  await Car.remove(car_no);
+  await Car.remove(car_id);
   
   return car;
 };
@@ -62,7 +62,7 @@ const getCars = async () => {
 };
 
 const updateCarStatByNo = async (car_no, updateBody) => {
-  const prev = await getCarByNoManage(car_no);
+  const prev = await getCarByIdManage(car_no);
   if (!prev) {
     throw new ApiError(httpStatus.NOT_FOUND, 'Car not found');
   }
@@ -78,9 +78,9 @@ const updateCarStatByNo = async (car_no, updateBody) => {
 module.exports = {
   createCarManage,
   queryCarsManage,
-  getCarByNoManage,
+  getCarByIdManage,
   getCars,
-  updateCarByNo,
+  updateCarById,
   updateCarStatByNo,
   deleteCarById,
 };
