@@ -13,11 +13,6 @@ router
   .get(validate(carHistValidation.getHistory), historyController.getHistory);
 
 router
-  .route('/point')
-  .post(upload.single('file'), validate(carHistValidation.createPointHistory), historyController.createPointHistory)
-  .get(validate(carHistValidation.getPointHistory), historyController.getPointHistory);
-
-router
   .route('/trip')
   .get(validate(carHistValidation.getTripHistory), historyController.queryTrip);
 

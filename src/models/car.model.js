@@ -239,7 +239,7 @@ const save = async (prev, car) => {
   return findByIdBasic(prev.car_id);
 };
 
-const saveState = async (prev, car) => {
+const saveState = async (car_id, car) => {
 
   if (car) {
     const con = await pool.getConnection(async conn => conn);
@@ -248,16 +248,13 @@ const saveState = async (prev, car) => {
       SET ?,
           updated_at = now()
       WHERE car_id = ?`;
-    await con.query(query, [car, prev.car_id]);
+    await con.query(query, [car, car_id]);
     await con.release();
   }
 
-  return findById(prev.car_id);
+  return findById(car_id);
 };
 
-const update_state = async (car_id, lat, lng, onoff) => {
-  condition();
-};
 
 const remove = async (car_id) => {
   const car = await findById(car_id);

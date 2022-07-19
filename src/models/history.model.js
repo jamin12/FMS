@@ -41,20 +41,15 @@ const condition = async (filter) => {
 const createHistory = async (historyBody) => {
   const { car_id, trip_seq, data } = historyBody;
 
-  const values = [];
-  for (let item of data) {
-    values.push([car_id, item.colec_dt, trip_seq, item.lat, item.lng]);
-  }
-
   let result;
   const insert_query = `
       INSERT INTO drive_hst (car_id, colec_dt, trip_seq, lat, lng)
-      VALUES ?`;
+      VALUES (?,?,?,?,?)`;
 
   const conn = await pool.getConnection();
   try {
     await conn.beginTransaction();
-    [result] = await conn.query(insert_query, [values]);
+    [result] = await conn.query(insert_query, [car_id, data.colec_dt, trip_seq,  data.lat, data.lng]);
     logger.debug(result);
     await conn.commit();
   } catch (err) {

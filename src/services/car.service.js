@@ -61,12 +61,22 @@ const getCars = async () => {
   return Car.findAll();
 };
 
+const getCarById = async (car_no) => {
+  const car = await Car.findById(car_no);
+  return car;
+};
+
+const updateCarStatById = async (car_id, body) => {
+  return await Car.saveState(car_id, body);
+};
+
 module.exports = {
   createCarManage,
   queryCarsManage,
   getCarByIdManage,
   getCars,
   updateCarById,
-  
+  getCarById,
   deleteCarById,
+  updateCarStatById,
 };
