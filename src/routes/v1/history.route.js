@@ -18,6 +18,11 @@ router
   .get(historyController.getTripSeqList, historyController.getTripSeqList);
 
 router
+  .route('/:car_no/:start_trip/:end_trip')
+  // 해당 차에대한 시작 trip과 마지막 trip으로 경로조회
+  .get(validate(carHistValidation.getPathByTrip), historyController.getPathByTrip);
+
+router
   .route('/basic')
   .post(validate(carHistValidation.createHistory), historyController.createHistory)
   .get(validate(carHistValidation.getHistory), historyController.getHistory);

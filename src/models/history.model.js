@@ -38,6 +38,7 @@ const condition = async (filter) => {
   return where_stmt;
 };
 
+// drive_hst 데이터 삽입
 const createHistory = async (historyBody) => {
   const { car_id, trip_seq, data } = historyBody;
 
@@ -269,6 +270,19 @@ const getTripSeqList = async (car_id) => {
   return result;
 };
 
+const getPathByTrip = async (car_id, start_trip, end_trip) => {
+  const conn = await pool.getConnection();
+  const select_query = `select * 
+    from drive_hst dh 
+      where car_id = ? and trip_seq BETWEEN ? 
+      and ?
+    `
+  const [result] = await conn.query(select_query,[car_id, start_trip, end_trip]);
+  conn.release();
+
+  return result;
+}
+
 module.exports = {
   findTripHistory,
   findHistory,
@@ -278,4 +292,5 @@ module.exports = {
   createTrip,
   updateTrip,
   getTripSeqList,
+  getPathByTrip,
 };

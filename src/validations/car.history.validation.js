@@ -13,6 +13,18 @@ const getTripseqList = {
 }
 
 /**
+ * 경로 조회
+ * @type {{body: Joi.ObjectSchema<any>}}
+ */
+  const getPathByTrip = {
+  params: Joi.object().keys({
+    car_no: Joi.string().required(),
+    start_trip: Joi.string().required(),
+    end_trip: Joi.string().required(),
+  }),
+}
+
+/**
  * 운행 기록
  * @type {{body: Joi.ObjectSchema<any>}}
  */
@@ -109,5 +121,6 @@ module.exports = {
   getTripHistory,
   createHistory,
   createPointHistory,
-  getTripseqList
+  getTripseqList,
+  getPathByTrip
 };

@@ -66,6 +66,8 @@ const getPointHistory = async (body) => {
   return History.findPointHistory(car_id, trip_seq);
 };
 
+
+// trip이 시작했을 때
 const startTrip = async (body) => {
   const { car_id, trip_seq, onoff, data } = body;
   const { colec_dt, lat, lng } = data;
@@ -73,6 +75,7 @@ const startTrip = async (body) => {
   return History.createTrip(car_id, trip_seq, colec_dt, lat, lng);
 };
 
+// trip이 끝났을 떄
 const endTrip = async (body) => {
   const { car_id, trip_seq, onoff, data } = body;
   const { colec_dt, lat, lng } = data;
@@ -80,6 +83,7 @@ const endTrip = async (body) => {
   return History.updateTrip(car_id, trip_seq, colec_dt, lat, lng);
 };
 
+// 매 초마다 해당 자동차의 위치 변경
 const saveLatestCarPosition = async (body) => {
   const { car_id, data } = body;
   const { lat, lng } = data;
@@ -96,6 +100,14 @@ const getTripSeqList = async (car_no) =>{
   return await History.getTripSeqList(car_id);
 };
 
+// 차량 trip 당 이동경로
+const getPathByTrip = async (car_no, start_trip, end_trip) => { 
+  if(end_trip === undefined){
+    end_trip = start_trip;
+  }
+  const car_id = await getIdByNo(car_no);
+  return await History.getPathByTrip(car_id, start_trip, end_trip);
+}
 module.exports = {
   addHistory,
   addDrivePoint,
@@ -103,4 +115,5 @@ module.exports = {
   getHistory,
   getPointHistory,
   getTripSeqList,
+  getPathByTrip,
 };

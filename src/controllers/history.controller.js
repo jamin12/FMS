@@ -49,6 +49,13 @@ const getCars = catchAsync(async (req, res) => {
 
   res.send({ cars_pick })
 });
+
+// 차량 trip 당 이동경로
+const getPathByTrip = catchAsync(async (req, res) => {
+  const result = await historyService.getPathByTrip(req.params.car_no, req.params.start_trip, req.params.end_trip);
+  res.send({ result });
+});
+
 module.exports = {
   createHistory,
   createPointHistory,
@@ -57,5 +64,6 @@ module.exports = {
   getHistory,
   getTripSeqList,
   getCars,
+  getPathByTrip,
 };
 
