@@ -20,11 +20,15 @@ router
 
 router
   .route('/carstate/:car_no')
-  .patch(validate(carValidation.updateCarState), car)
+  .patch(validate(carValidation.updateCarState), carController.updateCarStateByNo)
 
 router
   .route('/')
   .get(carController.getCars)
+
+router
+  .route('/drivehistory/:car_no')
+  .get()
 module.exports = router;
 
 /**

@@ -25,7 +25,7 @@ const queryCarsManage = async (filter, option) => {
   return Car.queryCarsManage(filter, option);
 };
 
-const updateCarById = async (car_no, updateBody) => {
+const updateCarByNo = async (car_no, updateBody) => {
   const prev = await getCarByNoManage(car_no);
   if (!prev) {
     throw new ApiError(httpStatus.NOT_FOUND, 'Car not found');
@@ -37,22 +37,9 @@ const updateCarById = async (car_no, updateBody) => {
   // Object.assign(car, updateBody);
   // console.log({ car: car });
   const car = await Car.save(prev, updateBody);
-  
-  return car;
-};
-
-const updateCarStatById = async (car_no, updateBody) => {
-  const prev = await getCarByNoManage(car_no);
-  if (!prev) {
-    throw new ApiError(httpStatus.NOT_FOUND, 'Car not found');
+  if(updateBody.car_no){
+    await Car.saveState(prev, { car_no:updateBody.car_no } );
   }
-  if (updateBody.car_id && (await Car.isCarIdTaken(updateBody.car_id, car_id))) {
-    throw new ApiError(httpStatus.BAD_REQUEST, 'car_id already taken');
-  }
-  // const car = JSON.parse(JSON.stringify(prev));
-  // Object.assign(car, updateBody);
-  // console.log({ car: car });
-  const car = await Car.saveState(prev, updateBody);
   
   return car;
 };
@@ -74,12 +61,26 @@ const getCars = async () => {
   return Car.findAll();
 };
 
+const updateCarStatByNo = async (car_no, updateBody) => {
+  const prev = await getCarByNoManage(car_no);
+  if (!prev) {
+    throw new ApiError(httpStatus.NOT_FOUND, 'Car not found');
+  }
+  if (updateBody.car_no && (await Car.isCarNoTaken(updateBody.car_no))) {
+    throw new ApiError(httpStatus.BAD_REQUEST, 'car_no already taken');
+  }
+  await Car.save({ car_no:car_no }, { car_no:updateBody.car_no });
+  const car = await Car.saveState(prev, updateBody);
+  
+  return car;
+};
+
 module.exports = {
   createCarManage,
   queryCarsManage,
   getCarByNoManage,
   getCars,
-  updateCarById,
-  updateCarStatById,
+  updateCarByNo,
+  updateCarStatByNo,
   deleteCarById,
 };

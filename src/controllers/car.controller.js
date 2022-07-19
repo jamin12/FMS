@@ -30,7 +30,7 @@ const getCarManage = catchAsync(async (req, res) => {
 });
 
 const updateCarManage = catchAsync(async (req, res) => {
-  const car = await carService.updateCarById(req.params.car_no, req.body);
+  const car = await carService.updateCarByNo(req.params.car_no, req.body);
   res.send({ car });
 });
 
@@ -46,7 +46,12 @@ const deleteCarManage = catchAsync(async (req, res) => {
 const getCars = catchAsync(async (req, res) => {
   const cars = await carService.getCars();
   res.send({cars})
-})
+});
+
+const updateCarStateByNo = catchAsync(async (req, res) => {
+  const updated_car_state = await carService.updateCarStatByNo(req.params.car_no, req.body);
+  res.send({ updated_car_state });
+});
 
 module.exports = {
   createCarManage,
@@ -56,4 +61,5 @@ module.exports = {
   deleteCarManage,
   getCarsManage,
   getCars,
+  updateCarStateByNo,
 };

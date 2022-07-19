@@ -14,12 +14,6 @@ const createCarManage = {
   }),
 };
 
-const getCar = {
-  params: Joi.object().keys({
-    car_no: Joi.string(),
-  }),
-};
-
 const getCarsManage = {
   query: Joi.object().keys({
     car_id: Joi.string(),
@@ -50,6 +44,23 @@ const deleteCarManage = {
   }),
 };
 
+const getCar = {
+  params: Joi.object().keys({
+    car_no: Joi.string(),
+  }),
+};
+
+const updateCarState = {
+  params: Joi.object().keys({
+    car_no: Joi.string().required(),
+  }),
+  body: Joi.object().keys({
+    car_no: Joi.string(),
+    lat: Joi.number().required(),
+    lng: Joi.number().required(),
+    onoff: Joi.number().required().valid(0, 1),
+  }),
+}
 module.exports = {
   getCar,
   // getCars,
@@ -57,4 +68,5 @@ module.exports = {
   updateCarManage,
   deleteCarManage,
   getCarsManage,
+  updateCarState,
 };
