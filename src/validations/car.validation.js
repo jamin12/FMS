@@ -11,6 +11,7 @@ const createCarManage = {
     car_no: Joi.string(),
     car_nm: Joi.string(),
     car_model_nm: Joi.string(),
+    car_color: Joi.string(),
   }),
 };
 
@@ -35,6 +36,7 @@ const updateCarManage = {
     car_no: Joi.string(),
     car_nm: Joi.string(),
     car_model_nm: Joi.string(),
+    car_color: Joi.string(),
   }),
 };
 

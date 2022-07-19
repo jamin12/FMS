@@ -9,11 +9,11 @@ const createUser = {
     details: Joi.object().keys({
       name: Joi.string(),
       mobile: Joi.string().custom(mobile),
-      gender: Joi.number().valid(0,1),
-      memo: Joi.string()
+      gender: Joi.number().valid(0, 1),
+      memo: Joi.string(),
     }),
-    role: Joi.string().required().valid('user', 'admin')
-  })
+    role: Joi.string().required().valid('user', 'superUser', 'admin'),
+  }),
 };
 
 const getUsers = {

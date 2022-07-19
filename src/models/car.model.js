@@ -88,13 +88,14 @@ const getIdByNo = async (car_no) => {
 }
 
 const create = async (carBody) => {
-  const { car_id, car_nm, car_no, car_model_nm } = carBody;
+  const { car_id, car_nm, car_no, car_model_nm, car_color } = carBody;
 
   const car = {
     car_id,
     car_nm,
     car_no,
     car_model_nm,
+    car_color,
   };
 
   let newCar;

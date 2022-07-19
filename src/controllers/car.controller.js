@@ -45,7 +45,7 @@ const deleteCarManage = catchAsync(async (req, res) => {
 ******************************************************/
 const getCars = catchAsync(async (req, res) => {
   const cars = await carService.getCars();
-  res.send({cars})
+  res.send({ cars });
 });
 
 module.exports = {

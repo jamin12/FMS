@@ -8,6 +8,10 @@ const carController = require('../../controllers/car.controller');
 const router = express.Router();
 
 router
+  .route('/')
+  .get(carController.getCars)
+
+router
   .route('/manage')
   .post(auth('manageUsers'), validate(carValidation.createCarManage), carController.createCarManage)
   .get(auth('manageUsers'), validate(carValidation.getCarsManage), carController.getCarsManage);
@@ -19,11 +23,7 @@ router
   .delete(auth('manageUsers'), validate(carValidation.deleteCarManage), carController.deleteCarManage);
 
 router
-  .route('/')
-  .get(carController.getCars)
-
-router
-  .route('/drivehistory/:car_no')
+  .route('/ws/:car_no')
   .get()
 
 module.exports = router;
