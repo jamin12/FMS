@@ -1,6 +1,17 @@
 const Joi = require('joi');
 const { carId, objectId, datetime } = require('./custom.validation');
 
+
+/**
+ * trip_seq 목록
+ * @type {{body: Joi.ObjectSchema<any>}}
+ */
+const getTripseqList = {
+  params: Joi.object().keys({
+    car_no: Joi.string().required(),
+  }),
+}
+
 /**
  * 운행 기록
  * @type {{body: Joi.ObjectSchema<any>}}
@@ -53,7 +64,7 @@ const getHistory = {
     car_id: Joi.string().custom(carId).required(),
     driver_id: Joi.string().custom(objectId),
     car_no: Joi.string(),
-    car_nm: Joi.string,
+    car_nm: Joi.string(),
     trip_seq: Joi.custom(datetime).required(),
     start_dt: Joi.custom(datetime),
     end_dt: Joi.custom(datetime)
@@ -69,7 +80,7 @@ const getPointHistory = {
     car_id: Joi.string().custom(carId).required(),
     driver_id: Joi.string().custom(objectId),
     car_no: Joi.string(),
-    car_nm: Joi.string,
+    car_nm: Joi.string(),
     trip_seq: Joi.custom(datetime).required(),
     start_dt: Joi.custom(datetime),
     end_dt: Joi.custom(datetime)
@@ -85,7 +96,7 @@ const getTripHistory = {
     car_id: Joi.string().custom(carId).required(),
     driver_id: Joi.string().custom(objectId),
     car_no: Joi.string(),
-    car_nm: Joi.string,
+    car_nm: Joi.string(),
     trip_seq: Joi.custom(datetime),
     start_dt: Joi.custom(datetime).required(),
     end_dt: Joi.custom(datetime).required()
@@ -97,5 +108,6 @@ module.exports = {
   getPointHistory,
   getTripHistory,
   createHistory,
-  createPointHistory
+  createPointHistory,
+  getTripseqList
 };

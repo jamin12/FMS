@@ -8,6 +8,16 @@ const historyController = require('../../controllers/history.controller.js');
 const router = express.Router();
 
 router
+  .route('/')
+  // 운행 이력에 들어갔을 때 자동차 정보들 전송
+  .get(historyController.getCars)
+
+router
+  .route('/:car_no')
+  // 운행 이력에 들어갔을 때 해당 차에대한 필요한 정보(trip_seq) 전송
+  .get(historyController.getTripSeqList, historyController.getTripSeqList);
+
+router
   .route('/basic')
   .post(validate(carHistValidation.createHistory), historyController.createHistory)
   .get(validate(carHistValidation.getHistory), historyController.getHistory);

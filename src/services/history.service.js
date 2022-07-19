@@ -90,10 +90,17 @@ const parseHHmmss = async (value) => {
   return moment(value).format('YYYYMMDD');
 };
 
+// trip_seq 리스트 가져오기
+const getTripSeqList = async (car_no) =>{
+  const car_id = await getIdByNo(car_no);
+  return await History.getTripSeqList(car_id);
+};
+
 module.exports = {
   addHistory,
   addDrivePoint,
   queryTrip,
   getHistory,
-  getPointHistory
+  getPointHistory,
+  getTripSeqList,
 };

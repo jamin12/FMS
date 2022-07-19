@@ -61,8 +61,8 @@ const getCars = async () => {
   return Car.findAll();
 };
 
-const getCarById = async (car_no) => {
-  const car = await Car.findById(car_no);
+const getCarById = async (car_id) => {
+  const car = await Car.findById(car_id);
   return car;
 };
 

@@ -256,6 +256,19 @@ const findPointHistory = async (car_id, trip_seq) => {
   return result;
 };
 
+// trip_seq 리스트 가져오기
+const getTripSeqList = async (car_id) => {
+  const conn = await pool.getConnection();
+  const select_query = `
+      SELECT distinct th.trip_seq, car_id 
+      FROM trip_hst th 
+      WHERE car_id = ?
+  `
+  const [result] = await conn.query(select_query,[car_id]);
+
+  return result;
+};
+
 module.exports = {
   findTripHistory,
   findHistory,
@@ -263,5 +276,6 @@ module.exports = {
   createHistory,
   createPointHistory,
   createTrip,
-  updateTrip
+  updateTrip,
+  getTripSeqList,
 };
