@@ -38,7 +38,6 @@ const updateCarManage = {
     car_no: Joi.string().required(),
   }),
   body: Joi.object().keys({
-    car_id: Joi.string(),
     car_no: Joi.string(),
     car_nm: Joi.string(),
     car_model_nm: Joi.string(),
