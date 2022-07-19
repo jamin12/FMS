@@ -20,7 +20,7 @@ const getTripseqList = {
   params: Joi.object().keys({
     car_no: Joi.string().required(),
     start_trip: Joi.string().required(),
-    end_trip: Joi.string().required(),
+    end_trip: Joi.string(),
   }),
 }
 

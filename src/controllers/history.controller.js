@@ -42,18 +42,24 @@ const getTripSeqList = catchAsync(async (req, res) => {
 // 차량 리트스 가져오기
 const getCars = catchAsync(async (req, res) => {
   const cars = await carService.getCars();
-  let cars_pick = []
+  let cars_pick = [];
   cars.forEach((car) => {
-    cars_pick.push(pick(car, ["car_no","car_nm","car_model_nm"]));
+    cars_pick.push(pick(car, ["car_no", "car_nm", "car_model_nm"]));
   });
 
-  res.send({ cars_pick })
+  res.send({ cars_pick });
 });
 
 // 차량 trip 당 이동경로
 const getPathByTrip = catchAsync(async (req, res) => {
   const result = await historyService.getPathByTrip(req.params.car_no, req.params.start_trip, req.params.end_trip);
-  res.send({ result });
+  const re = [];
+  result.forEach((res, index) => {
+    if (index % 10 === 0) {
+      re.push(res);
+    }
+  });
+  res.send({ re });
 });
 
 module.exports = {
@@ -66,4 +72,3 @@ module.exports = {
   getCars,
   getPathByTrip,
 };
-

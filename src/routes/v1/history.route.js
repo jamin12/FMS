@@ -10,7 +10,7 @@ const router = express.Router();
 router
   .route('/')
   // 운행 이력에 들어갔을 때 자동차 정보들 전송
-  .get(historyController.getCars)
+  .get(historyController.getCars);
 
 router
   .route('/:car_no')
