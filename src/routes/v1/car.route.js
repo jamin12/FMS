@@ -19,10 +19,6 @@ router
   .delete(auth('manageUsers'), validate(carValidation.deleteCarManage), carController.deleteCarManage);
 
 router
-  .route('/driveinfo/:car_no')
-  .post(validate(carValidation.updateCarState), carController.updateCarStateByNo)
-
-router
   .route('/')
   .get(carController.getCars)
 

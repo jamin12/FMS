@@ -48,11 +48,6 @@ const getCars = catchAsync(async (req, res) => {
   res.send({cars})
 });
 
-const updateCarStateByNo = catchAsync(async (req, res) => {
-  const updated_car_state = await carService.updateCarStatByNo(req.params.car_no, req.body);
-  res.send({ updated_car_state });
-});
-
 module.exports = {
   createCarManage,
   // getCars,
@@ -61,5 +56,4 @@ module.exports = {
   deleteCarManage,
   getCarsManage,
   getCars,
-  updateCarStateByNo,
 };

@@ -61,26 +61,12 @@ const getCars = async () => {
   return Car.findAll();
 };
 
-const updateCarStatByNo = async (car_no, updateBody) => {
-  const prev = await getCarByIdManage(car_no);
-  if (!prev) {
-    throw new ApiError(httpStatus.NOT_FOUND, 'Car not found');
-  }
-  if (updateBody.car_no && (await Car.isCarNoTaken(updateBody.car_no))) {
-    throw new ApiError(httpStatus.BAD_REQUEST, 'car_no already taken');
-  }
-  await Car.save({ car_no:car_no }, { car_no:updateBody.car_no });
-  const car = await Car.saveState(prev, updateBody);
-  
-  return car;
-};
-
 module.exports = {
   createCarManage,
   queryCarsManage,
   getCarByIdManage,
   getCars,
   updateCarById,
-  updateCarStatByNo,
+  
   deleteCarById,
 };
