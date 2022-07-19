@@ -39,6 +39,15 @@ const deleteCarManage = catchAsync(async (req, res) => {
   res.status(httpStatus.NO_CONTENT).send();
 });
 
+
+/*******************************************************
+차량 일반
+******************************************************/
+const getCars = catchAsync(async (req, res) => {
+  const cars = await carService.getCars();
+  res.send({cars})
+})
+
 module.exports = {
   createCarManage,
   // getCars,
@@ -46,4 +55,5 @@ module.exports = {
   updateCarManage,
   deleteCarManage,
   getCarsManage,
+  getCars,
 };

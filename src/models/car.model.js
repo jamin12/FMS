@@ -89,8 +89,8 @@ const create = async (carBody) => {
     INSERT INTO car_bas
     SET ?`;
   const insert_stat_query = `
-    INSERT INTO car_stat (car_id)
-    VALUES (?)`;
+    INSERT INTO car_stat (car_id,car_no)
+    VALUES (?,?)`;
   const select_query = `
     SELECT *
     FROM car_bas
@@ -100,7 +100,7 @@ const create = async (carBody) => {
   try {
     await conn.beginTransaction();
     await conn.query(insert_bas_query, [car]);
-    await conn.query(insert_stat_query, [car_id]);
+    await conn.query(insert_stat_query, [car_id,car_no]);
     [[newCar]] = await conn.query(select_query, [car_id]);
     await conn.commit();
   } catch (err) {
@@ -188,14 +188,14 @@ const findOne = async (filter) => {
 const findAll = async () => {
   const con = await pool.getConnection(async conn => conn);
   const query = `
-    SELECT C.car_id     AS car_id,
-           C.car_no     AS car_no,
-           C.car_nm     AS car_nm,
-           CS.lat       AS lat,
-           CS.lng       AS lng,
-           CS.onoff     AS onoff,
-           C.created_at AS created_at,
-           C.updated_at AS updated_at
+    SELECT C.car_no           AS car_no,
+           C.car_nm           AS car_nm,
+           C.car_model_nm     AS car_model_nm,
+           CS.lat             AS lat,
+           CS.lng             AS lng,
+           CS.onoff           AS onoff,
+           C.created_at       AS created_at,
+           C.updated_at       AS updated_at
     FROM car_bas C
            LEFT JOIN car_stat CS ON C.car_id = CS.car_id
   `;

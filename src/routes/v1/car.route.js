@@ -18,6 +18,13 @@ router
   .patch(auth('manageUsers'), validate(carValidation.updateCarManage), carController.updateCarManage)
   .delete(auth('manageUsers'), validate(carValidation.deleteCarManage), carController.deleteCarManage);
 
+router
+  .route('/carstate/:car_no')
+  .patch(validate(carValidation.updateCarState), car)
+
+router
+  .route('/')
+  .get(carController.getCars)
 module.exports = router;
 
 /**
