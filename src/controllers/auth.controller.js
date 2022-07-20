@@ -27,8 +27,8 @@ const login = catchAsync(async (req, res, next) => {
 });
 
 const logout = catchAsync(async (req, res) => {
-  await authService.logout(req.body.refreshToken);
-  res.status(httpStatus.NO_CONTENT).send();
+  req.session.destroy();
+  res.status(httpStatus.NO_CONTENT).send({ message: 'logout successful' });
 });
 
 const refreshTokens = catchAsync(async (req, res) => {
