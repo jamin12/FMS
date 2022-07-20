@@ -13,18 +13,15 @@ const register = catchAsync(async (req, res) => {
 });
 
 const login = catchAsync(async (req, res, next) => {
-  await passport.authenticate('local', { session: false }, (err, user) => {
+  await passport.authenticate('local', (err, user) => {
     if (err || !user) {
       return res.status(httpStatus[400]).send();
     }
-    req.login(user, { session: false }, (error) => {
+    req.login(user, (error) => {
       if (error) {
         return res.status(httpStatus[400]).send();
       }
-      const token = jwt.sign({ id: user, type: 'Authorization' }, myconfig.jwt.secret, {
-        expiresIn: `${String(myconfig.jwt.accessExpirationMinutes)}m`,
-      });
-      return res.send({ user, token });
+      return res.send({ user });
     });
   })(req, res, next);
 });

@@ -14,6 +14,9 @@ const { authLimiter } = require('./middlewares/rateLimiter');
 const routes = require('./routes/v1');
 const { errorConverter, errorHandler } = require('./middlewares/error');
 const ApiError = require('./utils/ApiError');
+const session = require("express-session");
+const mysqlstore = require("express-mysql-session")(session);
+
 
 const app = express();
 
@@ -43,10 +46,22 @@ app.use(compression());
 app.use(cors());
 app.options('*', cors());
 
+const option = config.session;
+
+// express session 설정
+app.use(session({
+  secret: config.jwt.secret, // 세션을 암호화 해줌
+  name: "authentication", // 쿠키 이름 설정
+  resave: false, // 세션을 항상 저장할지 여부를 정하는 값(false 권장)
+  saveUninitialized: true, // 초기화 되지 않은 채 스토어에 저장되는 세션
+  store: new mysqlstore(option),
+}));
+
+const passportConfig = require('./config/passport.index');
+passportConfig();
 // jwt authentication
 app.use(passport.initialize());
-passport.use(localStrategy);
-passport.use(jwtStrategy);
+app.use(passport.session())
 
 // limit repeated failed requests to auth endpoints
 if (config.env === 'production') {
