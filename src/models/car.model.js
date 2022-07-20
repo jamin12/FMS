@@ -74,6 +74,24 @@ const isCarNoTaken = async (car_no) => {
   return true;
 };
 
+const isCarColorTaken = async (car_color) => {
+  const conn = await pool.getConnection(async conn => conn);
+  const query = `
+    SELECT car_color 
+    FROM car_bas 
+    WHERE car_color = ?
+  `;
+  const [car] = await conn.query(query, [car_color]);
+  await conn.release();
+  if (!car || car.length === 0) {
+    return false;
+  }
+  if (car.length === 1) {
+    return true;
+  }
+  return true;
+};
+
 const getIdByNo = async (car_no) => {
   const conn = await pool.getConnection(async conn => conn);
   const query = `
@@ -315,4 +333,5 @@ module.exports = {
   queryCarsManage,
   isCarNoTaken,
   getIdByNo,
+  isCarColorTaken,
 };

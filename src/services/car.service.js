@@ -13,6 +13,9 @@ const createCarManage = async (carBody) => {
   if (await Car.isCarNoTaken(carBody.car_no)) {
     throw new ApiError(httpStatus.BAD_REQUEST, 'CarNo already taken');
   }
+  if (await Car.isCarColorTaken(carBody.car_color)) {
+    throw new ApiError(httpStatus.BAD_REQUEST, 'CarColor already taken');
+  }
 
   return Car.create(carBody);
 };
@@ -32,6 +35,9 @@ const updateCarById = async (car_no, updateBody) => {
   if (!prev) {
     throw new ApiError(httpStatus.NOT_FOUND, 'Car not found');
   }
+  if (await Car.isCarColorTaken(updateBody.car_color)) {
+    throw new ApiError(httpStatus.BAD_REQUEST, 'CarColor already taken');
+  }
   if (updateBody.car_no && (await Car.isCarNoTaken(updateBody.car_no))) {
     throw new ApiError(httpStatus.BAD_REQUEST, 'car_no already taken');
   }
@@ -39,7 +45,7 @@ const updateCarById = async (car_no, updateBody) => {
   // Object.assign(car, updateBody);
   // console.log({ car: car });
   const car = await Car.save(prev, updateBody);
-  
+
   return car;
 };
 
@@ -50,7 +56,7 @@ const deleteCarById = async (car_no) => {
     throw new ApiError(httpStatus.NOT_FOUND, 'Car not found');
   }
   await Car.remove(car_id);
-  
+
   return car;
 };
 
