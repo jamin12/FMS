@@ -4,7 +4,7 @@ const { pool, transaction } = require('../middlewares/db');
 const pick = require('../utils/pick');
 
 // car_bas랑 join한 정보들
-const findAllJoinCB = async () => {
+const findAllJoinCB = async (user_id) => {
   const con = await pool.getConnection(async (conn) => conn);
   const query = `
   SELECT 
@@ -12,12 +12,38 @@ const findAllJoinCB = async () => {
     cb.car_nm, 
     cb.car_model_nm, 
     cb.car_color,
+    cr.id        as reserve_id,
+    cr.user_id,
     cr.start_reserve,
     cr.end_reserve
   FROM car_bas cb 
     left join car_reserve cr on cb.car_id = cr.car_id
+  WHERE cr.user_id = ?
   `;
-  const [reserve_info] = await con.query(query);
+  const [reserve_info] = await con.query(query, [user_id]);
+  await con.release();
+
+  return reserve_info;
+};
+
+// car_bas랑 join한 정보들
+const findOneJoinCB = async (reserve_id) => {
+  const con = await pool.getConnection(async (conn) => conn);
+  const query = `
+  SELECT 
+    cb.car_no, 
+    cb.car_nm, 
+    cb.car_model_nm, 
+    cb.car_color,
+    cr.id        as reserve_id,
+    cr.user_id,
+    cr.start_reserve,
+    cr.end_reserve
+  FROM car_bas cb 
+    left join car_reserve cr on cb.car_id = cr.car_id
+  WHERE cr.id = ?
+  `;
+  const [reserve_info] = await con.query(query, [reserve_id]);
   await con.release();
 
   return reserve_info;
@@ -36,7 +62,7 @@ const findAll = async () => {
   return reserve_info;
 };
 
-// reserve단독 정보 하나
+// reserve 가장 최신 정보 하나
 const findOne = async () => {
   const con = await pool.getConnection(async (conn) => conn);
   const query = `
@@ -49,25 +75,71 @@ const findOne = async () => {
   return reserve_info;
 };
 
+// reserve id로 정보 찾기
+const findOneById = async (reserve_id) => {
+  const con = await pool.getConnection(async (conn) => conn);
+  const query = `
+  SELECT *
+  FROM car_reserve
+  WHERE id = ?
+  `;
+
+  const [[reserve_info]] = await con.query(query, [reserve_id]);
+  await con.release();
+
+  return reserve_info;
+};
 
 // create reserve
-const crateReserve = async (car_id, body) => {
+const crateReserve = async (car_id, update_body) => {
   const con = await pool.getConnection(async (conn) => conn);
-  const value = {};
-  value.car_id = car_id;
-  value.start_reserve = body.start_reserve;
-  value.end_reserve = body.end_reserve;
+  update_body.car_id = car_id;
   const query = `
   INSERT INTO car_reserve SET ?
   `
-  await con.query(query, [value]);
+  await con.query(query, [update_body]);
   await con.release();
 
   return await findOne();
 }
 
+// delete reserve
+const deleteReserve = async (reserve_id, user_id) => {
+  const con = await pool.getConnection(async (conn) => conn);
+  const query = `
+    DELETE FROM car_reserve
+    WHERE id = ? AND user_id = ?
+  `
+  const result = findOneById(reserve_id);
+
+  await con.query(query, [reserve_id, user_id]);
+  await con.release();
+
+
+  return result;
+};
+// update reserve
+const updateReserve = async (reserve_id, user_id, update_body) => {
+  const con = await pool.getConnection(async (conn) => conn);
+  const query = `
+    UPDATE car_reserve
+    SET ?
+    WHERE id = ? AND user_id = ?
+  `
+  
+  await con.query(query, [update_body, reserve_id, user_id]);
+  await con.release();
+  
+  const result = findOneJoinCB(reserve_id);
+
+  return result;
+};
+
+
 module.exports = {
   findAllJoinCB,
   findAll,
   crateReserve,
+  deleteReserve,
+  updateReserve,
 };

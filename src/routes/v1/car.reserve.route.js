@@ -9,7 +9,12 @@ const router = express.Router();
 
 router
   .route('/')
-  .get(carreserve.getReserveInfo)
-  .post(auth('user', 'superUser', 'manageUsers'), validate(carReserveValidation.createReserve), carreserve.createCarReserve);
+  .get(auth('user', 'superUser', 'manageUsers'), carreserve.getReserveInfo)
+  .post(auth('manageUsers', 'superUser', 'user'), validate(carReserveValidation.createReserve), carreserve.createReserve);
+
+router
+  .route('/:reserve_id')
+  .patch(auth('user', 'superUser', 'manageUsers'), validate(carReserveValidation.updateReserve), carreserve.updateReserve)
+  .delete(auth('user', 'superUser', 'manageUsers'), validate(carReserveValidation.deleteReserve), carreserve.deleteReserve);
 
 module.exports = router;
