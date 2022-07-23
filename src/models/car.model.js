@@ -2,6 +2,8 @@ const validator = require('validator');
 const { v4: uuid } = require('uuid');
 const { pool, transaction } = require('../middlewares/db');
 const pick = require('../utils/pick');
+const ApiError = require('../utils/ApiError');
+const httpStatus = require('http-status');
 
 
 class Car {
@@ -101,7 +103,9 @@ const getIdByNo = async (car_no) => {
   `;
   const [[car]] = await conn.query(query, [car_no]);
   await conn.release();
-  
+  if(!car){
+    throw new ApiError(httpStatus.NOT_FOUND, "car not found");
+  }
   return car.car_id;
 }
 

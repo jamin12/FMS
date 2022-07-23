@@ -10,26 +10,27 @@ const router = express.Router();
 router
   .route('/')
   // 운행 이력에 들어갔을 때 자동차 정보들 전송
-  .get(historyController.getCars);
+  .get(auth('user') ,historyController.getCars);
 
 router
   .route('/:car_no')
   // 운행 이력에 들어갔을 때 해당 차에대한 필요한 정보(trip_seq) 전송
-  .get(historyController.getTripSeqList, historyController.getTripSeqList);
+  .get(auth('user') ,historyController.getTripSeqList, historyController.getTripSeqList);
 
 router
   .route('/:car_no/:start_trip/:end_trip')
   // 해당 차에대한 시작 trip과 마지막 trip으로 경로조회
-  .get(validate(carHistValidation.getPathByTrip), historyController.getPathByTrip);
+  .get(auth('user') ,validate(carHistValidation.getPathByTrip), historyController.getPathByTrip);
 
 router
   .route('/basic')
-  .post(validate(carHistValidation.createHistory), historyController.createHistory)
-  .get(validate(carHistValidation.getHistory), historyController.getHistory);
+  // 차량 기록 저장
+  .post(auth('user') ,validate(carHistValidation.createHistory), historyController.createHistory)
+  .get(auth('user') ,validate(carHistValidation.getHistory), historyController.getHistory);
 
 router
   .route('/trip')
-  .get(validate(carHistValidation.getTripHistory), historyController.queryTrip);
+  .get(auth('user') ,validate(carHistValidation.getTripHistory), historyController.queryTrip);
 
 module.exports = router;
 

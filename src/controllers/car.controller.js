@@ -4,6 +4,7 @@ const ApiError = require('../utils/ApiError');
 const catchAsync = require('../utils/catchAsync');
 const logger = require('../config/logger');
 const { carService } = require('../services');
+const { getIdByNo } = require('../models/car.model');
 
 /*******************************************************
 차량 관리
@@ -48,12 +49,17 @@ const getCars = catchAsync(async (req, res) => {
   res.send({ cars });
 });
 
+const getCar = catchAsync(async (req, res) => {
+  const car_id = await getIdByNo(req.params.car_no);
+  const car = await carService.getCarById(car_id);
+  res.send({ car });
+});
 module.exports = {
   createCarManage,
-  // getCars,
   getCarManage,
   updateCarManage,
   deleteCarManage,
   getCarsManage,
   getCars,
+  getCar,
 };

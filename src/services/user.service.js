@@ -62,7 +62,6 @@ const getUserByUsername = async (username) => {
  */
 const updateUserById = async (userId, updateBody) => {
   const prev = await getUserById(userId);
-  let profile_img = prev.details.profile_img;
   if (!prev) {
     throw new ApiError(httpStatus.NOT_FOUND, 'User not found');
   }
@@ -99,8 +98,8 @@ const deleteUserById = async (userId) => {
   return user;
 };
 
-const queryUsers = async (filter, options) => {
-  return User.findAll(filter, options);
+const queryUsers = async (filter, options, role) => {
+  return User.findAll(filter, options, role);
 };
 
 module.exports = {

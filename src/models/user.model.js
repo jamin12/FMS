@@ -203,11 +203,15 @@ const findOne = async (filter) => {
   return joinUserDetail(user);
 };
 
-const findAll = async (filter, options) => {
-  const { name, role } = filter;
+const findAll = async (filter, options, my_role) => {
+  let { name, role } = filter;
   const { sortBy, sortOption, limit, page } = options;
   let where_stmt = '';
   let option_stmt = '';
+
+  if(my_role === 'superUser'){
+    role = 'superUser';
+  }
 
   if (name) where_stmt += (where_stmt === '' ? '' : 'AND ') + `username='${name}' `;
   if (role) where_stmt += (where_stmt === '' ? '' : 'AND ') + `role='${role}' `;
