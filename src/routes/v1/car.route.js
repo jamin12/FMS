@@ -12,10 +12,6 @@ router
   .get(auth('user'), carController.getCars)
 
 router
-.route('/:car_no')
-.get(auth('user'), validate(carValidation.getCar), carController.getCar)
-
-router
   .route('/manage')
   .post(auth('superUser'), validate(carValidation.createCarManage), carController.createCarManage)
   .get(auth('superUser'), validate(carValidation.getCarsManage), carController.getCarsManage);
@@ -26,7 +22,9 @@ router
   .patch(auth('superUser'), validate(carValidation.updateCarManage), carController.updateCarManage)
   .delete(auth('superUser'), validate(carValidation.deleteCarManage), carController.deleteCarManage);
 
-
+router
+  .route('/:car_no')
+  .get(auth('user'), validate(carValidation.getCar), carController.getCar)
 
 module.exports = router;
 

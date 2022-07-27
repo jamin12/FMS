@@ -22,11 +22,11 @@ const createCarManage = async (carBody) => {
 
 const getCarByIdManage = async (id) => {
   const car_id = await Car.getIdByNo(id);
-  return Car.findById(car_id);
+  return await Car.findById(car_id);
 };
 
 const queryCarsManage = async (filter, option) => {
-  return Car.queryCarsManage(filter, option);
+  return await Car.queryCarsManage(filter, option);
 };
 
 const updateCarById = async (car_no, updateBody) => {
