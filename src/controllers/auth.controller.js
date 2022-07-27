@@ -20,10 +20,10 @@ const login = catchAsync(async (req, res, next) => {
     req.login(user, (error) => {
       if (error) {
         return res.status(httpStatus[400]).send();
-      }
-      return res.send({ user });
+      }else return res.send({ user });
     });
   })(req, res, next);
+  res.send({ message: "login error" });
 });
 
 const logout = catchAsync(async (req, res) => {

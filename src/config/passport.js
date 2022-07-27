@@ -35,7 +35,7 @@ const loclaVerify = async (id, password, done) => {
       const user = await User.findById(id);
       done(null, user.id);
     } else {
-      done(null, false, { message: 'Password does not match' });
+      done(error, false);
     }
   } catch (error) {
     done(error, false);
