@@ -124,6 +124,19 @@ const isPasswordMatch = async (id, password) => {
   return bcrypt.compare(password, user.password);
 };
 
+const isPasswordMatchByEmail = async (email, password) => {
+  const con = await pool.getConnection(async conn => conn);
+  const query = `
+    SELECT password FROM users WHERE email=?
+  `;
+  const [[user]] = await con.query(query, [email]);
+  await con.release();
+  if (!user) {
+    return false;
+  }
+  return bcrypt.compare(password, user.password);
+};
+
 const create = async (userBody) => {
   const { email, username, password, details, role } = userBody;
 
@@ -181,6 +194,17 @@ const findById = async (id) => {
   SELECT * FROM users WHERE id = ?
   `;
   const [[user]] = await con.query(query, [id]);
+  await con.release();
+
+  return joinUserDetail(user);
+};
+
+const findByEmail = async (email) => {
+  const con = await pool.getConnection(async conn => conn);
+  const query = `
+  SELECT * FROM users WHERE email = ?
+  `;
+  const [[user]] = await con.query(query, [email]);
   await con.release();
 
   return joinUserDetail(user);
@@ -303,4 +327,6 @@ module.exports = {
   remove,
   toJSON,
   findAll,
+  findByEmail,
+  isPasswordMatchByEmail,
 };

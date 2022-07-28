@@ -15,20 +15,19 @@ const register = catchAsync(async (req, res) => {
 const login = catchAsync(async (req, res, next) => {
   await passport.authenticate('local', (err, user) => {
     if (err || !user) {
-      return res.status(httpStatus[400]).send();
+      return res.status(httpStatus.BAD_REQUEST).send({ message: "login error" });
     }
     req.login(user, (error) => {
       if (error) {
-        return res.status(httpStatus[400]).send();
-      }else return res.send({ user });
+        return res.status(httpStatus.BAD_REQUEST).send({ message: "login error" });
+      }else return res.send({ message: "login success" });
     });
   })(req, res, next);
-  res.send({ message: "login error" });
 });
 
 const logout = catchAsync(async (req, res) => {
   req.session.destroy();
-  res.status(httpStatus.NO_CONTENT).send({ message: 'logout successful' });
+  res.status(httpStatus.OK).send({ message: 'logout success' });
 });
 
 const refreshTokens = catchAsync(async (req, res) => {

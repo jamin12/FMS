@@ -25,14 +25,14 @@ const jwtVerify = async (payload, done) => {
 };
 
 const localOptions = {
-  usernameField: 'id',
+  usernameField: 'email',
   passwordField: 'password',
 };
 
-const loclaVerify = async (id, password, done) => {
+const loclaVerify = async (email, password, done) => {
   try {
-    if (await User.isPasswordMatch(id, password)) {
-      const user = await User.findById(id);
+    if (await User.isPasswordMatchByEmail(email, password)) {
+      const user = await User.findByEmail(email);
       done(null, user.id);
     } else {
       done(error, false);

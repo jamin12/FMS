@@ -1,7 +1,7 @@
 {
   "apps": [
     {
-      "name": "PROSPECS",
+      "name": "HYUNDAI_FMS_REST_API",
       "script": "src/index.js",
       "instances": 1,
       "autorestart": true,
