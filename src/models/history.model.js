@@ -5,7 +5,6 @@ const { pool, transaction } = require('../middlewares/db');
 const pick = require('../utils/pick');
 const logger = require('../config/logger');
 
-
 class History {
   constructor(history) {
     this.car_id = history.car_id;
@@ -20,15 +19,7 @@ class History {
   }
 }
 
-const history_col = [
-  'car_id',
-  'colec_dt',
-  'trip_seq',
-  'lat',
-  'lng',
-  'created_at',
-  'updated_at'
-];
+const history_col = ['car_id', 'colec_dt', 'trip_seq', 'lat', 'lng', 'created_at', 'updated_at'];
 
 const condition = async (filter) => {
   let where_stmt = '';
@@ -50,7 +41,7 @@ const createHistory = async (historyBody) => {
   const conn = await pool.getConnection();
   try {
     await conn.beginTransaction();
-    [result] = await conn.query(insert_query, [car_id, data.colec_dt, trip_seq,  data.lat, data.lng]);
+    await conn.query(insert_query, [car_id, data.colec_dt, trip_seq, data.lat, data.lng]);
     logger.debug(result);
     await conn.commit();
   } catch (err) {
@@ -60,6 +51,7 @@ const createHistory = async (historyBody) => {
     await conn.release();
   }
 
+  [result] = await getLastOne();
   return result;
 };
 
@@ -214,7 +206,7 @@ const findHistory = async (car_id, trip_seq) => {
   return {
     car_id,
     trip_seq,
-    data: result
+    data: result,
   };
 };
 
@@ -257,6 +249,18 @@ const findPointHistory = async (car_id, trip_seq) => {
   return result;
 };
 
+const getLastOne = async () => {
+  const conn = await pool.getConnection();
+  const select_query = `
+    SELECT *
+    FROM drive_hst
+    order by created_at desc limit 1;
+  `;
+  const [result] = await conn.query(select_query);
+
+  return result;
+};
+
 // trip_seq 리스트 가져오기
 const getTripSeqList = async (car_id) => {
   const conn = await pool.getConnection();
@@ -264,8 +268,8 @@ const getTripSeqList = async (car_id) => {
       SELECT distinct th.trip_seq, car_id 
       FROM trip_hst th 
       WHERE car_id = ?
-  `
-  const [result] = await conn.query(select_query,[car_id]);
+  `;
+  const [result] = await conn.query(select_query, [car_id]);
 
   return result;
 };
@@ -276,12 +280,35 @@ const getPathByTrip = async (car_id, start_trip, end_trip) => {
     from drive_hst dh 
       where car_id = ? and trip_seq BETWEEN ? 
       and ?
-    `
-  const [result] = await conn.query(select_query,[car_id, start_trip, end_trip]);
+    `;
+  const [result] = await conn.query(select_query, [car_id, start_trip, end_trip]);
   conn.release();
 
   return result;
-}
+};
+
+const delteHistory = async (car_id, colect_dt) => {
+  const conn = await pool.getConnection();
+  const select_query = `
+  delete from drive_hst 
+  where car_id = ? and colec_dt = ?
+  `;
+
+  await conn.query(select_query, [car_id, colect_dt]);
+  conn.release();
+};
+
+const delteTrip = async (car_id, trip_seq) => {
+  const conn = await pool.getConnection();
+  const select_query = `
+  delete from  trip_hst
+  where car_id = ? and trip_seq = ?
+  `;
+
+  await conn.query(select_query, [car_id, trip_seq]);
+  conn.release();
+
+};
 
 module.exports = {
   findTripHistory,
@@ -293,4 +320,7 @@ module.exports = {
   updateTrip,
   getTripSeqList,
   getPathByTrip,
+  getLastOne,
+  delteHistory,
+  delteTrip,
 };

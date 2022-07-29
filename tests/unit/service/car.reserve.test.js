@@ -15,16 +15,27 @@ describe('car reserve test', () => {
     expect(reserveInfo.length).toEqual(0);
   });
 
+  it('getReserveInfo', async () => {
+    const reserveInfo = await carReserveService.getReserveAllInfo();
+    expect(reserveInfo.length).toEqual(9);
+  });
+
   it('createReserve', async () => {
     carReserve.user_id = user_id;
     const reserveInfo = await carReserveService.createReserve(carReserve);
     expect(reserveInfo.car_no).toEqual(carReserve.car_no);
   });
 
+  it('update Reserve', async () => {
+    const recently_reserve = await carReservemodel.findOne();
+    delete carReserve.car_no;
+    const reserveInfo = await carReserveService.updateReserve(recently_reserve.id, user_id, carReserve);
+    expect(reserveInfo.reserve_id).toEqual(recently_reserve.id);
+  });
+
   it('delete Reserve', async () => {
     const recently_reserve = await carReservemodel.findOne();
     const reserveInfo = await carReserveService.deleteReserve(recently_reserve.id, user_id);
-    console.log(reserveInfo);
     expect(reserveInfo.id).toEqual(recently_reserve.id);
   });
 

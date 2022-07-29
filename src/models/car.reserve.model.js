@@ -39,7 +39,7 @@ const findAllJoinCB = async () => {
     cr.start_reserve,
     cr.end_reserve
   FROM car_bas cb 
-    left join car_reserve cr on cb.car_id = cr.car_id
+    right join car_reserve cr on cb.car_id = cr.car_id
   `;
   const [reserve_info] = await con.query(query);
   await con.release();
@@ -64,7 +64,7 @@ const findOneJoinCB = async (reserve_id) => {
     left join car_reserve cr on cb.car_id = cr.car_id
   WHERE cr.id = ?
   `;
-  const [reserve_info] = await con.query(query, [reserve_id]);
+  const [[reserve_info]] = await con.query(query, [reserve_id]);
   await con.release();
 
   return reserve_info;
@@ -131,7 +131,7 @@ const deleteReserve = async (reserve_id, user_id) => {
     DELETE FROM car_reserve
     WHERE id = ? AND user_id = ?
   `
-  const result = findOneById(reserve_id);
+  const result = await findOneById(reserve_id);
 
   await con.query(query, [reserve_id, user_id]);
   await con.release();
@@ -151,7 +151,7 @@ const updateReserve = async (reserve_id, user_id, update_body) => {
   await con.query(query, [update_body, reserve_id, user_id]);
   await con.release();
   
-  const result = findOneJoinCB(reserve_id);
+  const result = await findOneJoinCB(reserve_id);
 
   return result;
 };

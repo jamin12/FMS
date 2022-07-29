@@ -107,7 +107,8 @@ const getPathByTrip = async (car_no, start_trip, end_trip) => {
   }
   const car_id = await getIdByNo(car_no);
   return await History.getPathByTrip(car_id, start_trip, end_trip);
-}
+};
+
 module.exports = {
   addHistory,
   addDrivePoint,

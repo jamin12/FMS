@@ -18,6 +18,9 @@ const createReserve = async (update_body) => {
 };
 
 const updateReserve = async (reserve_id, user_id, update_body) => {
+  if (!await reserve.findOneJoinCB(reserve_id)) {
+    throw new ApiError(httpStatus.BAD_REQUEST, 'Reserve not found')
+  }
   return await reserve.updateReserve(reserve_id, user_id, update_body);
 };
 
