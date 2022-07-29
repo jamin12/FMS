@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/xeicon@2.3.3/xeicon.min.css" />
+    <link rel="stylesheet" href="./view/css/common.css"/>
+    <link rel="stylesheet" href="./view/css/style.css"/>
+    <script src="http://code.jquery.com/jquery-latest.min.js"></script>
+    <script defer src="./controller/main/MainController.js" type="module"></script>
+    <script defer src="./controller/common/EffectController.js" type="module"></script>
+    <title>MOBILTECH</title>
+  </head>
+  <body>
+    <div id="wrap">
+
+      <!-- 사이드메뉴 -->
+      <div class="side_menu">
+        <!-- 헤더(로고) -->
+        <div class="logo" id="logo"></div>
+        <!-- //헤더(로고) -->
+
+        <div class="cont_wrap">
+          <!-- 네비게이션 -->
+          <div class="navbar" id="navbar"></div>
+          <!-- //네비게이션 -->
+
+          <!-- 탭1 차량정보확인 -->
+          <div class="tab car_info" id="car_info"></div>
+          <!-- //탭1 차량정보확인 -->
+
+          <!-- 탭2 운행이력조회 -->
+          <div class="tab all_route active" id="all_route"></div>
+          <!-- //탭2 운행이력조회 -->
+
+          <!-- 탭3 실시간조회 -->
+          <div class="tab play_search" id="play_search"></div>
+          <!-- //탭3 실시간조회 -->    
+        </div>
+      </div>
+      <!-- //사이드메뉴 -->
+
+      <!-- 지도 -->
+      <div class="map" id="road_map"></div>
+      <!-- //지도 -->
+    </div>
+  </body>
+</html>

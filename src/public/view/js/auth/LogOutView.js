@@ -1,0 +1,5 @@
+class LogOutView {
+
+}
+
+export { LogOutView }
