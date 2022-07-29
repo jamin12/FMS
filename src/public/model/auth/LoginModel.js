@@ -11,7 +11,7 @@ class LoginModel {
   loginAjax(startDone) {
     $.ajax({
       method: 'POST',
-      url: `http://175.197.91.20:53012/v1/auth/login`,
+      url: `http://127.0.0.1:53012/v1/auth/login`,
       dataType: 'json',
       async: false,
       data: {
@@ -21,7 +21,7 @@ class LoginModel {
     })
       .done((response) => {
         console.log('login success', response);
-        startDone;
+        startDone();
       })
       .fail((err) => {
         console.log('login fail', err);

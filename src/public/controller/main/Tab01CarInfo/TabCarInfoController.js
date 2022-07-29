@@ -37,7 +37,7 @@ class TabCarInfoController {
   }
 
   carInfoHTML() {
-    this.LoginModel.loginAjax(this.carInfoAjax());
+    this.LoginModel.loginAjax(this.carInfoAjax);
 
     const carInfo = document.getElementById('car_info');
     let div = document.createElement('div');
