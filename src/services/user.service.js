@@ -3,7 +3,6 @@ const User = require('../models/user.model');
 const ApiError = require('../utils/ApiError');
 const { fileService } = require('../services');
 
-
 const createUser = async (userBody) => {
   if (await User.isEmailTaken(userBody.email)) {
     throw new ApiError(httpStatus.BAD_REQUEST, 'Email already taken');
@@ -13,25 +12,16 @@ const createUser = async (userBody) => {
     userBody.details.name = userBody.name;
     delete userBody.name;
   }
-  return User.create(userBody);
+  return await User.create(userBody);
 };
 
 const getUserById = async (id) => {
-  return User.findById(id);
+  return await User.findById(id);
 };
 
 const getUserByEmail = async (email) => {
-  return User.findOne({ email });
+  return await User.findOne({ email });
 };
-
-const getUserByMobile = async (mobile) => {
-  return User.findOne({ mobile });
-};
-
-const getUserByUsername = async (username) => {
-  return User.findOne({ username });
-};
-
 
 /**
  *
@@ -107,8 +97,6 @@ module.exports = {
   queryUsers,
   getUserById,
   getUserByEmail,
-  getUserByMobile,
-  getUserByUsername,
   updateUserById,
   deleteUserById,
 };

@@ -13,6 +13,10 @@ router
   .post(auth('user'), validate(carReserveValidation.createReserve), carreserve.createReserve);
 
 router
+  .route('/myreserve')
+  .get(auth('user'), carreserve.getMyReserveInfo);
+
+router
   .route('/:reserve_id')
   .patch(auth('user'), validate(carReserveValidation.updateReserve), carreserve.updateReserve)
   .delete(auth('user'), validate(carReserveValidation.deleteReserve), carreserve.deleteReserve);

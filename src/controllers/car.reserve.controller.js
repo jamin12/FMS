@@ -5,8 +5,13 @@ const catchAsync = require('../utils/catchAsync');
 const logger = require('../config/logger');
 const { carReserve } = require('../services');
 
+const getMyReserveInfo = catchAsync(async (req, res) => {
+  const result = await carReserve.getReserveInfobyUserId(req.user.id);
+  res.send({ result });
+});
+
 const getReserveInfo = catchAsync(async (req, res) => {
-  const result = await carReserve.getReserveInfo(req.user.id);
+  const result = await carReserve.getReserveAllInfo();
   res.send({ result });
 });
 
@@ -30,6 +35,7 @@ const deleteReserve = catchAsync(async (req,res) => {
 
 module.exports = {
   createReserve,
+  getMyReserveInfo,
   getReserveInfo,
   updateReserve,
   deleteReserve,

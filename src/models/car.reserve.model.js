@@ -4,7 +4,7 @@ const { pool, transaction } = require('../middlewares/db');
 const pick = require('../utils/pick');
 
 // car_bas랑 join한 정보들
-const findAllJoinCB = async (user_id) => {
+const findAllJoinCBbyUserId = async (user_id) => {
   const con = await pool.getConnection(async (conn) => conn);
   const query = `
   SELECT 
@@ -21,6 +21,27 @@ const findAllJoinCB = async (user_id) => {
   WHERE cr.user_id = ?
   `;
   const [reserve_info] = await con.query(query, [user_id]);
+  await con.release();
+
+  return reserve_info;
+};
+
+const findAllJoinCB = async () => {
+  const con = await pool.getConnection(async (conn) => conn);
+  const query = `
+  SELECT 
+    cb.car_no, 
+    cb.car_nm, 
+    cb.car_model_nm, 
+    cb.car_color,
+    cr.id        as reserve_id,
+    cr.user_id,
+    cr.start_reserve,
+    cr.end_reserve
+  FROM car_bas cb 
+    left join car_reserve cr on cb.car_id = cr.car_id
+  `;
+  const [reserve_info] = await con.query(query);
   await con.release();
 
   return reserve_info;
@@ -137,9 +158,12 @@ const updateReserve = async (reserve_id, user_id, update_body) => {
 
 
 module.exports = {
-  findAllJoinCB,
+  findAllJoinCBbyUserId,
   findAll,
   crateReserve,
   deleteReserve,
   updateReserve,
+  findAllJoinCB,
+  findOneJoinCB,
+  findOne,
 };

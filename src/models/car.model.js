@@ -5,7 +5,6 @@ const pick = require('../utils/pick');
 const ApiError = require('../utils/ApiError');
 const httpStatus = require('http-status');
 
-
 class Car {
   constructor(car) {
     this.car_id = car.car_id;
@@ -20,17 +19,7 @@ class Car {
   }
 }
 
-const car_col = [
-  'car_id',
-  'car_no',
-  'car_nm',
-  'car_model_nm',
-  'lat',
-  'lng',
-  'onoff',
-  'created_at',
-  'updated_at'
-];
+const car_col = ['car_id', 'car_no', 'car_nm', 'car_model_nm', 'lat', 'lng', 'onoff', 'created_at', 'updated_at'];
 
 const condition = async (filter) => {
   let where_stmt = '';
@@ -41,7 +30,7 @@ const condition = async (filter) => {
 };
 
 const isCarIdTaken = async (car_id) => {
-  const conn = await pool.getConnection(async conn => conn);
+  const conn = await pool.getConnection(async (conn) => conn);
   const query = `
     SELECT car_id
     FROM car_bas
@@ -59,7 +48,7 @@ const isCarIdTaken = async (car_id) => {
 };
 
 const isCarNoTaken = async (car_no) => {
-  const conn = await pool.getConnection(async conn => conn);
+  const conn = await pool.getConnection(async (conn) => conn);
   const query = `
     SELECT car_no 
     FROM car_bas 
@@ -77,7 +66,7 @@ const isCarNoTaken = async (car_no) => {
 };
 
 const isCarColorTaken = async (car_color) => {
-  const conn = await pool.getConnection(async conn => conn);
+  const conn = await pool.getConnection(async (conn) => conn);
   const query = `
     SELECT car_color 
     FROM car_bas 
@@ -95,7 +84,7 @@ const isCarColorTaken = async (car_color) => {
 };
 
 const getIdByNo = async (car_no) => {
-  const conn = await pool.getConnection(async conn => conn);
+  const conn = await pool.getConnection(async (conn) => conn);
   const query = `
     SELECT car_id
     FROM car_bas
@@ -103,11 +92,11 @@ const getIdByNo = async (car_no) => {
   `;
   const [[car]] = await conn.query(query, [car_no]);
   await conn.release();
-  if(!car){
-    throw new ApiError(httpStatus.NOT_FOUND, "car not found");
+  if (!car) {
+    throw new ApiError(httpStatus.NOT_FOUND, 'car not found');
   }
   return car.car_id;
-}
+};
 
 const create = async (carBody) => {
   const { car_id, car_nm, car_no, car_model_nm, car_color } = carBody;
@@ -151,7 +140,7 @@ const create = async (carBody) => {
 };
 
 const findById = async (id) => {
-  const con = await pool.getConnection(async conn => conn);
+  const con = await pool.getConnection(async (conn) => conn);
   const query = `
     SELECT C.car_id     AS car_id,
            C.car_no     AS car_no,
@@ -174,7 +163,7 @@ const findById = async (id) => {
 };
 
 const findByIdBasic = async (id) => {
-  const con = await pool.getConnection(async conn => conn);
+  const con = await pool.getConnection(async (conn) => conn);
   const query = `
     SELECT *
     FROM car_bas C
@@ -189,7 +178,7 @@ const findByIdBasic = async (id) => {
 const findOne = async (filter) => {
   const { car_id } = filter;
   let where_stmt = await condition(filter);
-  const con = await pool.getConnection(async conn => conn);
+  const con = await pool.getConnection(async (conn) => conn);
   const query = `
     SELECT C.car_id     AS car_id,
            C.car_no     AS car_no,
@@ -213,7 +202,7 @@ const findOne = async (filter) => {
 };
 
 const findAll = async () => {
-  const con = await pool.getConnection(async conn => conn);
+  const con = await pool.getConnection(async (conn) => conn);
   const query = `
     SELECT C.car_no           AS car_no,
            C.car_nm           AS car_nm,
@@ -241,7 +230,7 @@ const queryCarsManage = async (filter, options) => {
   if (sortBy) option_stmt += `order by ${sortBy} ${sortOption || ''} `;
   if (limit) option_stmt += 'limit ' + (page ? `${page}, ` : '') + limit;
 
-  const con = await pool.getConnection(async conn => conn);
+  const con = await pool.getConnection(async (conn) => conn);
   const query = `
   SELECT * FROM car_bas ${where_stmt ? 'WHERE ' + where_stmt : ''} ${option_stmt || ''}
   `;
@@ -253,7 +242,7 @@ const queryCarsManage = async (filter, options) => {
 
 const save = async (prev, car) => {
   if (car) {
-    const con = await pool.getConnection(async conn => conn);
+    const con = await pool.getConnection(async (conn) => conn);
     const query = `
       UPDATE car_bas
       SET ?,
@@ -268,9 +257,8 @@ const save = async (prev, car) => {
 };
 
 const saveState = async (car_id, car) => {
-
   if (car) {
-    const con = await pool.getConnection(async conn => conn);
+    const con = await pool.getConnection(async (conn) => conn);
     const query = `
       UPDATE car_stat
       SET ?,
@@ -283,10 +271,8 @@ const saveState = async (car_id, car) => {
   return findById(car_id);
 };
 
-
 const remove = async (car_id) => {
   const car = await findById(car_id);
-
 
   const delete_bas_query = `
     DELETE
@@ -316,9 +302,9 @@ const remove = async (car_id) => {
 const user_privates = ['password', 'password_reset', 'is_email_verified', 'is_mobile_verified', 'verified'];
 const user_details_privates = ['id', 'receive_mail', 'receive_sms'];
 const toJSON = (user) => {
-  user_privates.forEach(item => delete user[item]);
+  user_privates.forEach((item) => delete user[item]);
   if (user.details) {
-    user_details_privates.forEach(item => delete user['details'][item]);
+    user_details_privates.forEach((item) => delete user['details'][item]);
   }
 
   return user;
