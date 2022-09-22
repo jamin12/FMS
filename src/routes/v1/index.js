@@ -6,6 +6,7 @@ const docsRoute = require('./docs.route');
 const downloadRoute = require('./download.route');
 const carRoute = require('./car.route');
 const historyRoute = require('./history.route');
+const carReserve = require('./car.reserve.route');
 const config = require('../../config/config');
 
 const router = express.Router();
@@ -34,7 +35,11 @@ const defaultRoutes = [
   {
     path: '/user',
     route: userRoute,
-  }
+  },
+  {
+    path: '/reserve',
+    route: carReserve,
+  },
 ];
 
 const devRoutes = [

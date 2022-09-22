@@ -23,22 +23,14 @@ const register = {
 ;
 
 const login = {
-  body: Joi.object().keys({
-    email: Joi.string().email(),
-    mobile: Joi.string().custom(mobile),
-    password: Joi.string().required()
-  })
-    .when(Joi.object({
-      email: Joi.string()
-    }).empty(), {
-      then: Joi.object({ mobile: Joi.required() })
+  body: Joi.object()
+    .keys({
+      email: Joi.string().required(),
+      password: Joi.string().required(),
     })
-    .when(Joi.object({
-      mobile: Joi.string()
-    }).empty(), {
-      then: Joi.object({ email: Joi.required() })
-    })
+    .min(1),
 };
+
 
 const logout = {
   body: Joi.object().keys({

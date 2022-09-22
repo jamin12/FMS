@@ -3,7 +3,6 @@ const User = require('../models/user.model');
 const ApiError = require('../utils/ApiError');
 const { fileService } = require('../services');
 
-
 const createUser = async (userBody) => {
   if (await User.isEmailTaken(userBody.email)) {
     throw new ApiError(httpStatus.BAD_REQUEST, 'Email already taken');
@@ -13,23 +12,15 @@ const createUser = async (userBody) => {
     userBody.details.name = userBody.name;
     delete userBody.name;
   }
-  return User.create(userBody);
+  return await User.create(userBody);
 };
 
 const getUserById = async (id) => {
-  return User.findById(id);
+  return await User.findById(id);
 };
 
 const getUserByEmail = async (email) => {
-  return User.findOne({ email });
-};
-
-const getUserByMobile = async (mobile) => {
-  return User.findOne({ mobile });
-};
-
-const getUserByUsername = async (username) => {
-  return User.findOne({ username });
+  return await User.findOne({ email });
 };
 
 /**
@@ -61,7 +52,6 @@ const getUserByUsername = async (username) => {
  */
 const updateUserById = async (userId, updateBody) => {
   const prev = await getUserById(userId);
-  let profile_img = prev.details.profile_img;
   if (!prev) {
     throw new ApiError(httpStatus.NOT_FOUND, 'User not found');
   }
@@ -71,12 +61,10 @@ const updateUserById = async (userId, updateBody) => {
   if (updateBody.mobile && (await User.isMobileTaken(updateBody.mobile, userId))) {
     throw new ApiError(httpStatus.BAD_REQUEST, 'Mobile already taken');
   }
-  if (updateBody.email && (await User.isUsernameTaken(updateBody.username, userId))) {
-    throw new ApiError(httpStatus.BAD_REQUEST, 'Username already taken');
-  }
+
   const user = JSON.parse(JSON.stringify(prev));
   Object.assign(user, updateBody);
-  console.log({ user });
+
   await User.save(prev, user);
 
   // TODO: 프로필 이미지 변경 시 기존 파일 삭제
@@ -100,13 +88,15 @@ const deleteUserById = async (userId) => {
   return user;
 };
 
+const queryUsers = async (filter, options, role) => {
+  return User.findAll(filter, options, role);
+};
+
 module.exports = {
   createUser,
-  // queryUsers,
+  queryUsers,
   getUserById,
   getUserByEmail,
-  getUserByMobile,
-  getUserByUsername,
   updateUserById,
-  deleteUserById
+  deleteUserById,
 };

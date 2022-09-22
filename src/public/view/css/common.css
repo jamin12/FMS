@@ -1,0 +1,154 @@
+/* font */
+@import url("https://cdn.jsdelivr.net/gh/orioncactus/pretendard/dist/web/static/pretendard.css");
+
+* {
+  font-family: Pretendard, -apple-system, BlinkMacSystemFont, system-ui, Roboto, "Helvetica Neue", "Segoe UI", "Apple SD Gothic Neo", "Noto Sans KR", "Malgun Gothic", sans-serif;
+}
+
+@font-face {
+  font-family: 'SBAggroB';
+  src: url('https://cdn.jsdelivr.net/gh/projectnoonnu/noonfonts_2108@1.1/SBAggroB.woff') format('woff');
+  font-weight: normal;
+  font-style: normal;
+}
+/********************************
+* common
+*********************************/
+/* reset */
+body,
+p,
+ul {
+  margin: 0;
+  padding: 0;
+}
+a {
+  text-decoration: none;
+}
+li {
+  list-style: none;
+}
+
+/* layout */
+body {
+  background-color: #eee;
+  height: 100vh;
+}
+
+/* title */
+.cm_title01 {
+  font-size: 18px;
+  color: #fff;
+}
+
+/* color */
+.cm_color01 {
+  color: #ff665f;
+}
+.cm_color02 {
+  color: #5498ff;
+}
+.cm_color03 {
+  color: #bcc400;
+}
+.cm_color04 {
+  color: #ec7d2a;
+}
+.cm_color05 {
+  color: #00b4f6;
+}
+.cm_color06 {
+  color: #c9a30d;
+}
+.cm_color07 {
+  color: #b064ff;
+}
+.cm_color08 {
+  color: #2cab89
+}
+.cm_color09 {
+  color: #fe62c3;
+}
+.cm_color10 {
+  color: #cb7000;
+}
+
+/* button */
+.cm_btn01 {
+  background-color: #4f5050;
+  color: #fff;
+  border-radius: 3px;
+  border: 0;
+  cursor: pointer;
+}
+
+/* table */
+.cm_table01 {
+  margin-top: 30px;
+  border-collapse: collapse;
+  color: #fff;
+  width: 100%;
+  font-size: 14px;
+}
+.cm_table01 th {
+  border-top: 1px solid rgba(255, 255, 255, 0.2);
+  border-bottom: 1px solid rgba(255, 255, 255, 0.2);
+  font-weight: 400;
+  color: #b6b6b6;
+  padding: 10px 0;
+}
+.cm_table01 td {
+  text-align: center;
+  padding: 12px 0 3px 0;
+}
+.cm_table01 td.defult {
+  height: 50px;
+}
+.cm_table01 td .category {
+  display: flex;
+  align-items: center;
+  cursor: pointer;
+}
+.cm_table01 td i {
+  font-size: 17px;
+  margin-right: 3px;
+}
+
+/* page */
+.cm_page01 {
+  display: flex;
+  gap: 0 5px;
+}
+.cm_page01 a {
+  width: 25px;
+  height: 25px;
+  border-radius: 50%;
+  color: #fff;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 13px;
+  border: 1px solid #4f5050;
+}
+.cm_page01 a.active {
+  background-color: #4f5050;
+  
+}
+
+/* 공통 css */
+.cm_car_select {
+  margin-top: 20px;
+  display: grid;
+  grid-template-columns: repeat(5, 1fr);
+  gap: 7px;
+}
+.cm_car_select button {
+  background-color: rgb(79 80 80 / 30%);
+  border: 0;
+  height: 35px;
+  cursor: pointer;
+  border-radius: 3px;
+  border: 1px solid transparent;
+}
+.cm_car_select button.active {
+  border: 1px solid;
+}

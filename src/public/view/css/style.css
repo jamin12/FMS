@@ -1,0 +1,404 @@
+/*****************************************************
+* 로그인
+*****************************************************/
+.login {
+  background-color: #20334c;
+  height: 100vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  position: relative;
+  overflow: hidden;
+}
+.login video {
+  transform: scale(1.2);
+}
+.login .back_layer {
+  background-color: rgba(22,22,22,0.7);
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100vh;
+}
+.login .login_box {
+  /* background-color:rgb(0 0 0 / 50%); */
+  display: inline-block;
+  width: 350px;
+  border-radius: 10px;
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  padding: 40px;
+  transform: translate(-50%,-50%);
+  opacity: 0;
+  transition: 1.5s;
+}
+.login .login_box.active {
+  opacity: 1;
+}
+.login .login_box .logo{
+  text-align: center;
+  color: #f0f0f0; 
+  font-size: 38px; 
+  font-weight: 600; 
+  letter-spacing: 0.9px;
+}
+.login .login_box .logo p {
+  font-family: 'SBAggroB';
+}
+.login .login_box .input_wrap {
+  margin: 30px 0;
+  display: grid;
+  gap: 10px 0;
+}
+.login .login_box .input_wrap input {
+  padding: 13px;
+  box-sizing: border-box;
+  border:0;
+  background-color: rgba(255,255,255,0.5);
+  width: calc(100% - 40px);
+  height: 50px;
+  outline: none;
+  font-size: 17px;
+  border-radius: 3px;
+  color: #fff;
+}
+.login .login_box .input_wrap input::placeholder {
+  color: #ccc;
+}
+.login .login_box .input_wrap .id_wrap,
+.login .login_box .input_wrap .pw_wrap{
+  display: flex;
+  align-items: center;
+  gap: 0 9px;
+}
+.login .login_box .input_wrap .id_wrap .icon_box,
+.login .login_box .input_wrap .pw_wrap .icon_box {
+  background-color: #2b3c51;
+  width: 50px;
+  height: 50px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 4px;
+}
+.login .login_box .input_wrap .id_wrap .icon_box img{
+  height: 27px;
+  filter: invert(1);
+}
+.login .login_box .input_wrap .pw_wrap .icon_box img {
+  height: 24px;
+  filter: invert(1);
+}
+
+.login .login_box .btn_wrap button {
+  width: 100%;
+  height: 50px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 18px;
+} 
+/*****************************************************
+* 사이드메뉴
+*****************************************************/
+/* 지도 */
+.map {
+  height: 100vh;
+}
+
+.side_menu {
+  min-height: 100%;
+  width: 500px;
+  background-color: rgba(0, 0, 0, 0.85);
+  position: absolute;
+  top: 0;
+  left: 0;
+}
+.side_menu .logo {
+  padding: 25px 20px 18px;
+  background-color: #20334c;
+  border-bottom: 1px solid rgba(255,255,255,0.1);
+}
+.side_menu .logo a {
+  display: inline-flex; 
+  align-items: center; 
+  color: #FFF; 
+  font-size: 19px; 
+  font-weight: 600; 
+  letter-spacing: 0.9px;
+  height: 22px;
+}
+.side_menu .logo a span {
+  font-family: 'SBAggroB';
+  height: 22px;
+}
+.side_menu .logo img {
+  height: 22px;
+  border-radius: 50%;
+  margin-right: 8px;
+  /* filter: brightness(0) invert(1); */
+}
+.side_menu .cont_wrap {
+  padding: 25px 20px 0;
+}
+
+.side_menu .navbar {
+  padding-bottom: 30px;
+}
+.side_menu .navbar ul {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  border-radius: 10px;
+  background-color: #111;
+  padding: 17px 0;
+}
+.side_menu .navbar ul li:not(:last-child) {
+  border-right: 1px solid rgba(255, 255, 255, 0.2);
+}
+.side_menu .navbar ul li a {
+  color: #fff;
+  font-size: 14px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+.side_menu .navbar ul li a i {
+  margin-right: 5px;
+}
+
+/*****************************************************
+* 탭1 (차량정보확인)
+*****************************************************/
+.side_menu .tab {
+  display: none;
+}
+.side_menu .tab.active {
+  display: block;
+}
+.side_menu .tab.car_info {
+  overflow-y: auto;
+  height: calc(100vh - 190px);
+  padding: 0 20px 25px 0;
+
+}
+.side_menu .tab.car_info .box_wrap {
+  display: flex;
+  flex-direction: column;
+}
+.side_menu .tab.car_info::-webkit-scrollbar {
+  width: 7px;
+}
+.side_menu .tab.car_info::-webkit-scrollbar-thumb {
+  background-color: #333;
+  border-radius: 10px;
+}
+
+.side_menu .tab.car_info::-webkit-scrollbar-track {
+  background-color: transparent;
+}
+.side_menu .tab.car_info .car_box.active {
+  border-radius: 10px;
+  padding: 20px;
+  box-sizing: border-box;
+  background-color: #323232;
+}
+.side_menu .tab.car_info .car_box.off {
+  filter: brightness(0.5);
+  order: 1;
+}
+.side_menu .tab.car_info .car_box {
+  transition: 0.4s;
+  cursor: pointer;
+  margin-bottom: 40px;
+}
+.side_menu .tab.car_info .car_box .title_wrap {
+  display: flex;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.2);
+  padding-bottom: 15px;
+}
+.side_menu .tab.car_info .car_box .title_wrap .car_name {
+  margin-left: 15px;
+}
+.side_menu .tab.car_info .car_box .title_wrap .car_name .title {
+  color: #fff;
+  font-size: 20px;
+  font-weight: 600;
+  margin-top: 10px;
+}
+.side_menu .tab.car_info .car_box .title_wrap [class*="car_mark"] {
+  font-size: 27px;
+  border-radius: 100%;
+  color: #fff;
+  width: 50px;
+  height: 50px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+.side_menu .tab.car_info .car_box .title_wrap [class*="car_mark"] i {
+  margin-top: -5px;
+}
+.side_menu .tab.car_info .car_box .title_wrap .car_mark01 {
+  background-color: rgba(243, 86, 79, 0.9);
+  border: 2px solid #ff564e;
+}
+.side_menu .tab.car_info .car_box .title_wrap .car_mark02 {
+  background-color: rgba(53, 129, 245, 0.9);
+  border: 2px solid #68a4ff;
+}
+.side_menu .tab.car_info .car_box .title_wrap .car_mark03 {
+  background-color: #969e04;
+  border: 2px solid #bcc400;
+}
+.side_menu .tab.car_info .car_box .title_wrap .car_mark04 {
+  background-color: #e06e1a;
+  border: 2px solid #e58f49;
+}
+.side_menu .tab.car_info .car_box .title_wrap .car_mark05 {
+  background-color: #0c84af;
+  border: 2px solid #00a7e2;
+}
+.side_menu .tab.car_info .car_box .title_wrap .car_mark06 {
+  background-color: #af8e0c;
+  border: 2px solid #d5af00;
+}
+.side_menu .tab.car_info .car_box .title_wrap .car_mark07 {
+  background-color: #773eb3;
+  border: 2px solid #9153d3;
+}
+.side_menu .tab.car_info .car_box .title_wrap .car_mark08 {
+  background-color: #269376;
+  border: 2px solid #2cab89;
+}
+.side_menu .tab.car_info .car_box .title_wrap .car_mark09 {
+  background-color: #c733a6;
+  border: 2px solid #e25cc4;
+}
+.side_menu .tab.car_info .car_box .title_wrap .car_mark10 {
+  background-color: #a35b00;
+  border: 2px solid #c26b01;
+}
+
+
+.side_menu .tab.car_info .car_box .car_area .car_img img {
+  width: 200px;
+}
+.side_menu .tab.car_info .car_box .car_area p {
+  font-size: 15px;
+  color: #b6b6b6;
+  position: relative;
+  padding-left: 20px;
+}
+.side_menu .tab.car_info .car_box .car_area p:not(:first-child) {
+  margin-top: 10px;
+}
+.side_menu .tab.car_info .car_box .car_area p span {
+  color: #fff;
+  margin-left: 10px;
+}
+.side_menu .tab.car_info .car_box .text_wrap p::before {
+  content: "";
+  border-radius: 100%;
+  width: 8px;
+  height: 8px;
+  background-color: transparent;
+  position: absolute;
+  top: 3px;
+  left: 0;
+}
+
+.side_menu .tab.car_info .car_box .text_wrap p::before {
+  border: 2px solid #6d6d6d;
+}
+
+/*****************************************************
+* 탭2 (운행이력조회)
+*****************************************************/
+.side_menu .tab.all_route p {
+  color: #fff;
+}
+.side_menu .tab.all_route .contrl {
+  margin-top: 20px;
+  display: flex;
+  align-items: center;
+  padding: 15px;
+  background-color: rgb(79 80 80 / 30%);
+}
+.side_menu .tab.all_route .contrl input {
+  width: 110px;
+  margin: 0 5px;
+  border: 0;
+  border-radius: 3px;
+  padding: 5px;
+  outline: none;
+}
+.side_menu .tab.all_route .contrl select {
+  outline: none;
+  font-size: 12px;
+  border: 0;
+  border-radius: 3px;
+  padding: 3px;
+  height: 26px;
+}
+.side_menu .tab.all_route .contrl button {
+  width: 50px;
+  height: 26px;
+  margin-left: 10px;
+}
+.side_menu .tab.all_route .contrl p {
+  font-size: 16px;
+  margin: 0 10px;
+}
+.side_menu .tab.all_route .contrl_btn ul {
+  margin-top: 15px;
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 10px;
+}
+.side_menu .tab.all_route .contrl_btn ul li button {
+  font-size: 13px;
+  width: 100%;
+  padding: 6px 0;
+}
+.side_menu .tab.all_route .table_wrap {
+  padding-bottom: 10px;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.2);
+}
+.side_menu .tab.all_route .page_wrap {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin: 30px 0;
+}
+
+/*****************************************************
+* 탭3 (실시간조회)
+*****************************************************/
+.side_menu .tab.play_search .table_wrap {
+  padding-bottom: 10px;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.2);
+}
+.side_menu .tab.play_search .page_wrap {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin: 30px 0;
+}
+
+/*****************************************************
+* responsive
+*****************************************************/
+@media ( max-width: 1920px ) {
+  .login video { transform: scale(1.5); }
+}
+@media ( max-width: 1550px ) {
+  .login video { transform: scale(2); }
+}
+@media ( max-width: 1150px ) {
+  .login video { transform: scale(2.5); }
+}
+@media ( max-width: 960px ) {
+  .login video { transform: scale(3); }
+}

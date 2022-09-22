@@ -37,7 +37,7 @@ const user_col = [
   'mobile',
   'name',
   'accept_terms',
-  'email_verified',
+  'email',
   'mobile_verified'
 ];
 
@@ -80,7 +80,7 @@ const isEmailTaken = async (email) => {
 const isMobileTaken = async (mobile) => {
   const con = await pool.getConnection(async conn => conn);
   const query = `
-    SELECT mobile FROM users WHERE mobile = ?
+    SELECT mobile FROM user_details WHERE mobile = ?
   `;
   const [user] = await con.query(query, [mobile]);
   await con.release();
@@ -124,8 +124,21 @@ const isPasswordMatch = async (id, password) => {
   return bcrypt.compare(password, user.password);
 };
 
+const isPasswordMatchByEmail = async (email, password) => {
+  const con = await pool.getConnection(async conn => conn);
+  const query = `
+    SELECT password FROM users WHERE email=?
+  `;
+  const [[user]] = await con.query(query, [email]);
+  await con.release();
+  if (!user) {
+    return false;
+  }
+  return bcrypt.compare(password, user.password);
+};
+
 const create = async (userBody) => {
-  const { email, password, details, role } = userBody;
+  const { email, username, password, details, role } = userBody;
 
   if (!validator.isEmail(email)) {
     throw new Error('Invalid email');
@@ -137,7 +150,16 @@ const create = async (userBody) => {
   const user = {
     id: uuid(),
     email: email,
+    username: username,
     password: await bcrypt.hash(password, 8)
+  };
+
+  const userDtails = {
+    id: user.id,
+    name: details.name,
+    mobile: details.mobile,
+    gender: details.gender,
+    memo: details.memo
   };
 
   if (role) user.role = role;
@@ -161,7 +183,7 @@ const create = async (userBody) => {
     await conn.release();
   }
   Object.assign(user, newUser);
-  user.details = await UserDetail.create({ id: user.id, name: details.name });
+  user.details = await UserDetail.create(userDtails);
 
   return user;
 };
@@ -172,6 +194,17 @@ const findById = async (id) => {
   SELECT * FROM users WHERE id = ?
   `;
   const [[user]] = await con.query(query, [id]);
+  await con.release();
+
+  return joinUserDetail(user);
+};
+
+const findByEmail = async (email) => {
+  const con = await pool.getConnection(async conn => conn);
+  const query = `
+  SELECT * FROM users WHERE email = ?
+  `;
+  const [[user]] = await con.query(query, [email]);
   await con.release();
 
   return joinUserDetail(user);
@@ -194,6 +227,31 @@ const findOne = async (filter) => {
   return joinUserDetail(user);
 };
 
+const findAll = async (filter, options, my_role) => {
+  let { name, role } = filter;
+  const { sortBy, sortOption, limit, page } = options;
+  let where_stmt = '';
+  let option_stmt = '';
+
+  if(my_role === 'superUser'){
+    role = 'superUser';
+  }
+
+  if (name) where_stmt += (where_stmt === '' ? '' : 'AND ') + `username='${name}' `;
+  if (role) where_stmt += (where_stmt === '' ? '' : 'AND ') + `role='${role}' `;
+  if (sortBy) option_stmt += `order by ${sortBy} ${sortOption || ''} `;
+  if (limit) option_stmt += 'limit ' + (page ? `${page}, ` : '') + limit;
+
+  const con = await pool.getConnection(async conn => conn);
+  const query = `
+  SELECT * FROM users ${where_stmt ? 'WHERE ' + where_stmt : ''}  ${option_stmt || ''}
+  `;
+  const [user] = await con.query(query);
+  await con.release();
+
+  return joinUserDetail(user);
+};
+
 const save = async (prev, user) => {
   const result = await splitUserDetails(user);
   const user_details = result.userDetail;
@@ -203,13 +261,16 @@ const save = async (prev, user) => {
     if (prev.password !== user.password) user.password = await bcrypt.hash(user.password, 8);
 
     const con = await pool.getConnection(async conn => conn);
+
+    /* `update_at`	datetime	null default current_timestamp on update current_timestamp 
+    database updated_at컬럼에 on update가 달려 있어야함 */
     const query = `
-    UPDATE users SET ? AND updated_at = current_timestamp WHERE id = ?`;
+    UPDATE users SET ? WHERE id = ?`;
     await con.query(query, [user, user.id]);
     await con.release();
   }
   if (user_details) {
-    await UserDetail.save(user_details);
+    await UserDetail.save(user_details, user.id);
   }
   return findById(user.id);
 };
@@ -218,12 +279,13 @@ const remove = async (id) => {
   const con = await pool.getConnection(async conn => conn);
   const user = await findById(id);
 
+  await UserDetail.remove(id);
+  
   const query = `
   DELETE FROM users WHERE id = ?
   `;
   const result = await con.query(query, [id]);
   await con.release();
-  await UserDetail.remove(id);
 
   return user;
 };
@@ -239,6 +301,20 @@ const toJSON = (user) => {
   return user;
 };
 
+// 페이징 처리
+const pageResult = (limit, curpage) => {
+    // 디폴트 페이지 가져올 사이즈
+    const DEFAULT_START_PAGE = 1;
+    const DEFAULT_PAGE_SIZE = limit ? limit : 5;
+    
+  // 페이지가 0보다 작으면 기본 페이지 적용
+  if (curpage <= 0)  curpage = DEFAULT_START_PAGE
+  return {
+      offset: (curpage - 1) * DEFAULT_PAGE_SIZE,
+      limit: DEFAULT_PAGE_SIZE
+  };
+}
+
 module.exports = {
   isEmailTaken,
   isMobileTaken,
@@ -249,5 +325,8 @@ module.exports = {
   findOne,
   save,
   remove,
-  toJSON
+  toJSON,
+  findAll,
+  findByEmail,
+  isPasswordMatchByEmail,
 };

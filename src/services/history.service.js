@@ -4,6 +4,7 @@ const History = require('../models/history.model');
 const ApiError = require('../utils/ApiError');
 const logger = require('../config/logger');
 const { carService, fileService } = require('../services');
+const { getIdByNo } = require('../models/car.model');
 
 
 const addHistory = async (body) => {
@@ -13,7 +14,9 @@ const addHistory = async (body) => {
   ELIF CS.onoff = 1 AND data.onoff = 0 -> last
   ELSE just insert
    */
-  const car = await carService.getCarById(body.car_id);
+  const car_id = await getIdByNo(body.car_no);
+  body.car_id = car_id;
+  const car = await carService.getCarById(car_id);
   if (!car) {
     throw new ApiError('car not found!');
   }
@@ -63,29 +66,47 @@ const getPointHistory = async (body) => {
   return History.findPointHistory(car_id, trip_seq);
 };
 
+
+// trip이 시작했을 때
 const startTrip = async (body) => {
   const { car_id, trip_seq, onoff, data } = body;
-  const { colec_dt, lat, lng } = data[0];
+  const { colec_dt, lat, lng } = data;
   await carService.updateCarStatById(car_id, { onoff, lat, lng });
   return History.createTrip(car_id, trip_seq, colec_dt, lat, lng);
 };
 
+// trip이 끝났을 떄
 const endTrip = async (body) => {
   const { car_id, trip_seq, onoff, data } = body;
-  const { colec_dt, lat, lng } = data[data.length - 1];
+  const { colec_dt, lat, lng } = data;
   await carService.updateCarStatById(car_id, { onoff, lat, lng });
   return History.updateTrip(car_id, trip_seq, colec_dt, lat, lng);
 };
 
+// 매 초마다 해당 자동차의 위치 변경
 const saveLatestCarPosition = async (body) => {
   const { car_id, data } = body;
-  const { colec_dt, lat, lng } = data[data.length - 1];
-  // TODO car status 에 colec_dt 추가
-  return  carService.updateCarStatById(car_id, { lat, lng });
+  const { lat, lng } = data;
+  return await carService.updateCarStatById(car_id, { lat, lng });
 };
 
 const parseHHmmss = async (value) => {
   return moment(value).format('YYYYMMDD');
+};
+
+// trip_seq 리스트 가져오기
+const getTripSeqList = async (car_no) =>{
+  const car_id = await getIdByNo(car_no);
+  return await History.getTripSeqList(car_id);
+};
+
+// 차량 trip 당 이동경로
+const getPathByTrip = async (car_no, start_trip, end_trip) => { 
+  if(end_trip === undefined){
+    end_trip = start_trip;
+  }
+  const car_id = await getIdByNo(car_no);
+  return await History.getPathByTrip(car_id, start_trip, end_trip);
 };
 
 module.exports = {
@@ -93,5 +114,7 @@ module.exports = {
   addDrivePoint,
   queryTrip,
   getHistory,
-  getPointHistory
+  getPointHistory,
+  getTripSeqList,
+  getPathByTrip,
 };

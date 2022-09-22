@@ -1,7 +1,10 @@
 const httpStatus = require('http-status');
+const passport = require('passport');
+const jwt = require('jsonwebtoken');
 const catchAsync = require('../utils/catchAsync');
 const User = require('../models/user.model');
 const { authService, userService, tokenService, emailService } = require('../services');
+const myconfig = require('../config/config');
 
 const register = catchAsync(async (req, res) => {
   const user = await userService.createUser(req.body);
@@ -9,16 +12,22 @@ const register = catchAsync(async (req, res) => {
   res.status(httpStatus.CREATED).send({ user: User.toJSON(user), tokens });
 });
 
-const login = catchAsync(async (req, res) => {
-  const { email, password } = req.body;
-  const user = await authService.loginUserWithEmailAndPassword(email, password);
-  const tokens = await tokenService.generateAuthTokens(user);
-  res.send({ user: User.toJSON(user), tokens });
+const login = catchAsync(async (req, res, next) => {
+  await passport.authenticate('local', (err, user) => {
+    if (err || !user) {
+      return res.status(httpStatus.BAD_REQUEST).send({ message: "login error" });
+    }
+    req.login(user, (error) => {
+      if (error) {
+        return res.status(httpStatus.BAD_REQUEST).send({ message: "login error" });
+      }else return res.send({ message: "login success" });
+    });
+  })(req, res, next);
 });
 
 const logout = catchAsync(async (req, res) => {
-  await authService.logout(req.body.refreshToken);
-  res.status(httpStatus.NO_CONTENT).send();
+  req.session.destroy();
+  res.status(httpStatus.OK).send({ message: 'logout success' });
 });
 
 const refreshTokens = catchAsync(async (req, res) => {

@@ -3,34 +3,43 @@ const Car = require('../models/car.model');
 const ApiError = require('../utils/ApiError');
 const { fileService } = require('../services');
 
-
-const createCar = async (carBody) => {
+/*******************************************************
+차량 관리
+******************************************************/
+const createCarManage = async (carBody) => {
   if (await Car.isCarIdTaken(carBody.car_id)) {
     throw new ApiError(httpStatus.BAD_REQUEST, 'CarId already taken');
+  }
+  if (await Car.isCarNoTaken(carBody.car_no)) {
+    throw new ApiError(httpStatus.BAD_REQUEST, 'CarNo already taken');
+  }
+  if (await Car.isCarColorTaken(carBody.car_color)) {
+    throw new ApiError(httpStatus.BAD_REQUEST, 'CarColor already taken');
   }
 
   return Car.create(carBody);
 };
 
-const getCarById = async (id) => {
-  return Car.findById(id);
+const getCarByIdManage = async (id) => {
+  const car_id = await Car.getIdByNo(id);
+  return await Car.findById(car_id);
 };
 
-const getCars = async () => {
-  return Car.findAll();
+const queryCarsManage = async (filter, option) => {
+  return await Car.queryCarsManage(filter, option);
 };
 
-const queryCars = async (filter, option) => {
-
-};
-
-const updateCarById = async (car_id, updateBody) => {
-  const prev = await getCarById(car_id);
+const updateCarById = async (car_no, updateBody) => {
+  const car_id = await Car.getIdByNo(car_no);
+  const prev = await Car.findById(car_id);
   if (!prev) {
     throw new ApiError(httpStatus.NOT_FOUND, 'Car not found');
   }
-  if (updateBody.car_id && (await Car.isCarIdTaken(updateBody.car_id, car_id))) {
-    throw new ApiError(httpStatus.BAD_REQUEST, 'car_id already taken');
+  if (await Car.isCarColorTaken(updateBody.car_color)) {
+    throw new ApiError(httpStatus.BAD_REQUEST, 'CarColor already taken');
+  }
+  if (updateBody.car_no && (await Car.isCarNoTaken(updateBody.car_no))) {
+    throw new ApiError(httpStatus.BAD_REQUEST, 'car_no already taken');
   }
   // const car = JSON.parse(JSON.stringify(prev));
   // Object.assign(car, updateBody);
@@ -40,24 +49,9 @@ const updateCarById = async (car_id, updateBody) => {
   return car;
 };
 
-const updateCarStatById = async (car_id, updateBody) => {
-  const prev = await getCarById(car_id);
-  if (!prev) {
-    throw new ApiError(httpStatus.NOT_FOUND, 'Car not found');
-  }
-  if (updateBody.car_id && (await Car.isCarIdTaken(updateBody.car_id, car_id))) {
-    throw new ApiError(httpStatus.BAD_REQUEST, 'car_id already taken');
-  }
-  // const car = JSON.parse(JSON.stringify(prev));
-  // Object.assign(car, updateBody);
-  // console.log({ car: car });
-  const car = await Car.saveState(prev, updateBody);
-
-  return car;
-};
-
-const deleteCarById = async (car_id) => {
-  const car = await getCarById(car_id);
+const deleteCarById = async (car_no) => {
+  const car_id = await Car.getIdByNo(car_no);
+  const car = await Car.findById(car_id);
   if (!car) {
     throw new ApiError(httpStatus.NOT_FOUND, 'Car not found');
   }
@@ -66,11 +60,29 @@ const deleteCarById = async (car_id) => {
   return car;
 };
 
+/*******************************************************
+차량 일반
+******************************************************/
+const getCars = async () => {
+  return Car.findAll();
+};
+
+const getCarById = async (car_id) => {
+  const car = await Car.findById(car_id);
+  return car;
+};
+
+const updateCarStatById = async (car_id, body) => {
+  return await Car.saveState(car_id, body);
+};
+
 module.exports = {
-  createCar,
-  queryCars,
-  getCarById,
+  createCarManage,
+  queryCarsManage,
+  getCarByIdManage,
   getCars,
-  updateCarById, updateCarStatById,
-  deleteCarById
+  updateCarById,
+  getCarById,
+  deleteCarById,
+  updateCarStatById,
 };
